@@ -1,4 +1,3 @@
-
 " on('--[no-]hoge={poyo}')
 "   --hoge=true returns 1 and --hoge=false returns 0
 "   otherwise, --hoge=huga returns 'huga'
@@ -33,24 +32,67 @@ function! s:extract_special_opts(argc, argv)
     return ret
 endfunction
 
-function! s:is_valid(args)
-    for arg in a:args
-        if arg !~# '^--\%(no-\)\=[^= ]\+\%(=[^= ]\+\)\=$'
-            echoerr 'Unexpected argument: '.arg
-            return 0
+function! s:is_key_value(arg)
+    return a:arg =~# '^--\%(no-\)\=[^= ]\+\%(=\S\+\)\=$'
+endfunction
+
+function! s:parse_args(q_args, options)
+    let args = split(a:q_args)
+    let parsed_args = {}
+    let unknown_args = []
+
+    for arg in args
+        if s:is_key_value(arg)
+            if arg =~# '^--no-[^= ]\+'
+                " if --no-hoge pattern
+                let key = matchstr(arg, '^--no-\zs[^= ]\+')
+                if has_key(a:options, key) && has_key(a:options[key], 'no')
+                    let parsed_args[key] = 0
+                else
+                    call add(unknown_args, arg)
+                endif
+            elseif arg =~# '^--[^= ]\+$'
+                " if --hoge pattern
+                let key = matchstr(arg, '^--\zs[^= ]\+')
+                if has_key(a:options, key)
+                    let parsed_args[key] = 1
+                else
+                    call add(unknown_args, arg)
+                endif
+            else
+                " if --hoge=poyo pattern
+                let key = matchstr(arg, '^--\zs[^= ]\+')
+                if has_key(a:options, key)
+                    let parsed_args[key] = matchstr(arg, '^--[^= ]\+=\zs\S\+$')
+                else
+                    call add(unknown_args, arg)
+                endif
+            endif
+        else
+            call add(unknown_args, arg)
         endif
     endfor
+
+    return [parsed_args, unknown_args]
 endfunction
 
 function! s:parse(...) dict
-    let args = s:parse_args(a:0, a:000)
-    echo args
+    let opts = s:extract_special_opts(a:0, a:000)
+    if ! has_key(opts, 'q_args')
+        return opts.specials
+    endif
+
+    let parsed_args = s:parse_args(opts.q_args, self.options)
+
+    let ret = parsed_args[0]
+    call extend(ret, opts.specials)
+    let ret.__unknown_args__ = parsed_args[1]
+    return ret
 endfunction
 
 function! optparse#new()
-    return { 'options' : [],
+    return { 'options' : {},
            \ 'on' : function('s:on'),
            \ 'parse' : function('s:parse'),
            \ }
 endfunction
-
