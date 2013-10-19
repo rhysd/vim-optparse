@@ -10,8 +10,8 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 
 ## TODO
 
-- parse `--[no-]hoge` definition in `s:on()` and add attribute collectly
 - parse `--hoge=VALUE` definition in `s:on()`
+- short options
 - add tests
 - refactorings
 
