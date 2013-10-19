@@ -36,8 +36,7 @@ endfunction
 
 function! s:show_help(options)
     let key_width = s:max_len(map(values(a:options), "v:val.definition"))
-    PP values(a:options)
-    echomsg join(map(values(a:options), '
+    echo join(map(values(a:options), '
                 \ v:val.definition .
                 \ repeat(" ", key_width - len(v:val.definition)) . " : " .
                 \ v:val.description
