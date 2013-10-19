@@ -1,3 +1,5 @@
+let s:save_cpo = &cpo
+set cpo&vim
 
 function! s:max_len(arr)
     let max_len = 1
@@ -104,3 +106,6 @@ function! optparse#lazy#parse(...) dict
     let ret.__unknown_args__ = parsed_args[1]
     return ret
 endfunction
+
+let &cpo = s:save_cpo
+unlet s:save_cpo

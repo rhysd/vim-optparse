@@ -1,3 +1,6 @@
+let s:save_cpo = &cpo
+set cpo&vim
+
 " on('--[no-]hoge={poyo}')
 "   --hoge=true returns 1 and --hoge=false returns 0
 "   otherwise, --hoge=huga returns 'huga'
@@ -34,3 +37,6 @@ function! optparse#new()
            \ 'parse' : function('s:parse'),
            \ }
 endfunction
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
