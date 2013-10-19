@@ -6,7 +6,19 @@
 "   __count__ has 
 " options must not contain any white spaces
 function! s:on(...) dict
-
+    if a:0 == 2
+        let name = matchstr(a:1, '^--\zs[^= ]\+$')
+        if name == ''
+            echoerr 'Option of key is invalid: '.name
+        else
+            " NOTE: a:1 is description
+            let self.options[name] = a:1
+        endif
+    elseif a:0 == 3
+        throw "Not implemented"
+    else
+        echoerr 'Wrong number of arguments ('.a:0.' for 3 or 2)'
+    endif
 endfunction
 
 function! s:extract_special_opts(argc, argv)
