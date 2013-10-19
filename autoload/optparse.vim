@@ -26,7 +26,7 @@ function! s:on(...) dict
     endif
 endfunction
 
-" lazy calling parse function to load functions lazily
+" separate parse function to other file to load functions lazily
 function! s:parse(...) dict
     return call('optparse#lazy#parse', a:000, self)
 endfunction
