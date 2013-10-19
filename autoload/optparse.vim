@@ -13,7 +13,7 @@ endfunction
 function! s:extract_special_opts(argc, argv)
     let ret = {'specials' : {}}
     if a:argc > 0
-        let ret.args = a:argv[0]
+        let ret.q_args = a:argv[0]
         for arg in a:argv[1:]
             let arg_type = type(arg)
             if arg_type == type([])
