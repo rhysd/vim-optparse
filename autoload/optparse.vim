@@ -10,22 +10,21 @@ function! s:on(...) dict
 
 endfunction
 
-function! s:parse_args(argc, argv)
-    let ret = {}
+function! s:extract_special_opts(argc, argv)
+    let ret = {'specials' : {}}
     if a:argc > 0
         let ret.args = a:argv[0]
-        let ret.options = {}
         for arg in a:argv[1:]
             let arg_type = type(arg)
             if arg_type == type([])
-                let ret.options.__range__ = arg
+                let ret.specials.__range__ = arg
             elseif arg_type == type(0)
-                let ret.options.__count__ = arg
+                let ret.specials.__count__ = arg
             elseif arg_type == type('')
                 if arg ==# '!'
-                    let ret.options.__bang__ = arg
+                    let ret.specials.__bang__ = arg
                 elseif arg != ''
-                    let ret.options.__reg__ = arg
+                    let ret.specials.__reg__ = arg
                 endif
             endif
             unlet arg
