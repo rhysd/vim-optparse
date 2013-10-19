@@ -34,6 +34,15 @@ function! s:parse_args(argc, argv)
     return ret
 endfunction
 
+function! s:is_valid(args)
+    for arg in a:args
+        if arg !~# '^--\%(no-\)\=[^= ]\+\%(=[^= ]\+\)\=$'
+            echoerr 'Unexpected argument: '.arg
+            return 0
+        endif
+    endfor
+endfunction
+
 function! s:parse(...) dict
     let args = s:parse_args(a:0, a:000)
     echo args
