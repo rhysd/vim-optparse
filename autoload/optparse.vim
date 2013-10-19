@@ -118,7 +118,7 @@ function! s:parse(...) dict
 
     if opts.q_args ==# '--help' && ! has_key(self.options, 'help')
         call s:show_help(self.options)
-        return opts.specials
+        return extend(opts.specials, {'help' : 1})
     endif
 
     let parsed_args = s:parse_args(opts.q_args, self.options)
