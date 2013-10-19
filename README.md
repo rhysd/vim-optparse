@@ -12,6 +12,8 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 
 - parse `--[no-]hoge` definition in `s:on()` and add attribute collectly
 - parse `--hoge=VALUE` definition in `s:on()`
+- add tests
+- refactorings
 
 ## Example
 
@@ -19,8 +21,8 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 " make option parser instance
 let s:opt = optparse#new()
 
-" define arguments
-call s:opt.on('--hoge', 'this is description of hoge')
+" define options
+call s:opt.on('--hoge=VALUE', 'this is description of hoge')
 call s:opt.on('--foo', 'this is description of foo')
 call s:opt.on('--bar', 'this is description of bar')
 
@@ -40,9 +42,9 @@ Hoge! --hoge=huga --bar poyo
 " show help
 Hoge --help
 " echo following message
-"   --hoge : this is description of hoge
-"   --foo  : this is description of foo
-"   --bar  : this is description of bar
+"   --hoge=VALUE : this is description of hoge
+"   --foo        : this is description of foo
+"   --bar        : this is description of bar
 "
 " => {
 "      '__count__' : 0,
