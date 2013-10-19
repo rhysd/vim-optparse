@@ -5,20 +5,43 @@
 " __bang__ is special keys. it contains 1 if <bang> is setted
 "   __count__ has 
 " options must not contain any white spaces
+" TODO parse --[no-]
+" TODO parse VALUE of --hoge=VALUE
 function! s:on(...) dict
     if a:0 == 2
-        let name = matchstr(a:1, '^--\zs[^= ]\+$')
+        let name = matchstr(a:1, '^--\zs[^= ]\+')
         if name == ''
             echoerr 'Option of key is invalid: '.name
         else
             " NOTE: a:1 is description
-            let self.options[name] = a:1
+            let self.options[name] = {'definition' : a:1, 'description' : a:2}
         endif
     elseif a:0 == 3
         throw "Not implemented"
     else
         echoerr 'Wrong number of arguments ('.a:0.' for 3 or 2)'
     endif
+endfunction
+
+function! s:max_len(arr)
+    let max_len = 1
+    for i in a:arr
+        let len = len(i)
+        if len > max_len
+            let max_len = len
+        endif
+    endfor
+    return max_len
+endfunction
+
+function! s:show_help(options)
+    let key_width = s:max_len(map(values(a:options), "v:val.definition"))
+    PP values(a:options)
+    echomsg join(map(values(a:options), '
+                \ v:val.definition .
+                \ repeat(" ", key_width - len(v:val.definition)) . " : " .
+                \ v:val.description
+                \ '), "\n")
 endfunction
 
 function! s:extract_special_opts(argc, argv)
@@ -91,6 +114,11 @@ endfunction
 function! s:parse(...) dict
     let opts = s:extract_special_opts(a:0, a:000)
     if ! has_key(opts, 'q_args')
+        return opts.specials
+    endif
+
+    if opts.q_args ==# '--help' && ! has_key(self.options, 'help')
+        call s:show_help(self.options)
         return opts.specials
     endif
 
