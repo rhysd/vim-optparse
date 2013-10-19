@@ -94,7 +94,7 @@ function! optparse#lazy#parse(...) dict
         return opts.specials
     endif
 
-    if (! has_key(opts, 'disable_auto_help') || ! opts.disable_auto_help)
+    if ! (has_key(self, 'disable_auto_help') && self.disable_auto_help)
       \  && opts.q_args ==# '--help'
       \  && ! has_key(self.options, 'help')
         call s:show_help(self.options)
