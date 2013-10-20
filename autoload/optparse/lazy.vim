@@ -67,6 +67,9 @@ function! s:parse_args(q_args, options)
                 " if --hoge pattern
                 let key = matchstr(arg, '^--\zs[^= ]\+')
                 if has_key(a:options, key)
+                    if has_key(a:options[key], 'has_value')
+                        echoerr 'Must specify value for option: '.key
+                    endif
                     let parsed_args[key] = 1
                 else
                     call add(unknown_args, arg)

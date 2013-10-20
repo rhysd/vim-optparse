@@ -32,7 +32,6 @@ function! s:on(...) dict
                 let self.options[name].has_value = 1
             endif
         endif
-
     elseif a:0 == 3
         " short options like -h for --hoge
         throw "Not implemented"
