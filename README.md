@@ -10,7 +10,6 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 
 ## TODO
 
-- parse `--hoge=VALUE` definition in `s:on()`
 - short options
 - add tests
 - refactorings
