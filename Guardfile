@@ -18,7 +18,7 @@ def notify m
 end
 
 guard :shell do
-  watch /^(autoload|plugin|t)\/.+\.vim$/ do
+  watch /^(autoload|plugin|t)\/.+_spec\.vim$/ do
     system "rake test"
     notify "test(s) failed" unless $?.success?
   end
