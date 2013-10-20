@@ -1,6 +1,12 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+function! s:get_SID()
+    return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeget_SID$')
+endfunction
+let s:SID = s:get_SID()
+delfunction s:get_SID
+
 function! s:on(...) dict
     if a:0 == 2
         let [name, value] = matchlist(a:1, '^--\([^= ]\+\)\(=\S\+\)\=$')[1:2]
@@ -39,8 +45,8 @@ endfunction
 
 function! optparse#new()
     return { 'options' : {},
-           \ 'on' : function('s:on'),
-           \ 'parse' : function('s:parse'),
+           \ 'on' : function(s:SID.'on'),
+           \ 'parse' : function(s:SID.'parse'),
            \ }
 endfunction
 
