@@ -16,7 +16,10 @@ describe 'optparse#new()'
     it 'make dictionary to parse options'
         let g:Opt = optparse#new()
         Expect g:Opt to_have_key 'options'
+        Expect g:Opt.options == {}
         Expect g:Opt to_have_key 'on'
+        Expect g:Opt.on to_be_funcref
         Expect g:Opt to_have_key 'parse'
+        Expect g:Opt.parse to_be_funcref
     end
 end
