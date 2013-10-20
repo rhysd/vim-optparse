@@ -1,17 +1,9 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-" on('--[no-]hoge={poyo}')
-"   --hoge=true returns 1 and --hoge=false returns 0
-"   otherwise, --hoge=huga returns 'huga'
-"   if [no-] is added, --no-hoge returns 0 and --hoge returns 1
-" __bang__ is special keys. it contains 1 if <bang> is setted
-"   __count__ has 
-" options must not contain any white spaces
-" TODO parse VALUE of --hoge=VALUE
 function! s:on(...) dict
     if a:0 == 2
-        let [name, value] = matchlist(a:1, '^--\([^= ]\+\)\(=\S\+\)\=')[1:2]
+        let [name, value] = matchlist(a:1, '^--\([^= ]\+\)\(=\S\+\)\=$')[1:2]
         if value != ''
             let has_value = 1
         endif
