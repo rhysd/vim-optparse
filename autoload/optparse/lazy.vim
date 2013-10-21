@@ -45,6 +45,7 @@ function! s:extract_special_opts(argc, argv)
 endfunction
 
 function! s:is_key_value(arg)
+    " check if arg is --[no-]hoge[=VALUE]
     return a:arg =~# '^--\%(no-\)\=[^= ]\+\%(=\S\+\)\=$'
 endfunction
 
@@ -55,16 +56,20 @@ function! s:parse_args(q_args, options)
 
     for arg in args
         if s:is_key_value(arg)
+
+            " if --no-hoge pattern
             if arg =~# '^--no-[^= ]\+'
-                " if --no-hoge pattern
+                " get hoge from --no-hoge
                 let key = matchstr(arg, '^--no-\zs[^= ]\+')
                 if has_key(a:options, key) && has_key(a:options[key], 'no')
                     let parsed_args[key] = 0
                 else
                     call add(unknown_args, arg)
                 endif
+
+            " if --hoge pattern
             elseif arg =~# '^--[^= ]\+$'
-                " if --hoge pattern
+                " get hoge from --hoge
                 let key = matchstr(arg, '^--\zs[^= ]\+')
                 if has_key(a:options, key)
                     if has_key(a:options[key], 'has_value')
@@ -74,15 +79,19 @@ function! s:parse_args(q_args, options)
                 else
                     call add(unknown_args, arg)
                 endif
+
+            " if --hoge=poyo pattern
             else
-                " if --hoge=poyo pattern
+                " get hoge from --hoge=poyo
                 let key = matchstr(arg, '^--\zs[^= ]\+')
                 if has_key(a:options, key)
+                    " get poyo from --hoge=poyo
                     let parsed_args[key] = matchstr(arg, '^--[^= ]\+=\zs\S\+$')
                 else
                     call add(unknown_args, arg)
                 endif
             endif
+
         else
             call add(unknown_args, arg)
         endif

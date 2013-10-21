@@ -9,6 +9,8 @@ delfunction s:get_SID
 
 function! s:on(...) dict
     if a:0 == 2
+
+        " get hoge and huga from --hoge=huga
         let [name, value] = matchlist(a:1, '^--\([^= ]\+\)\(=\S\+\)\=$')[1:2]
         if value != ''
             let has_value = 1
@@ -30,6 +32,7 @@ function! s:on(...) dict
                 let self.options[name].has_value = 1
             endif
         endif
+
     elseif a:0 == 3
         " short options like -h for --hoge
         throw "Not implemented"
