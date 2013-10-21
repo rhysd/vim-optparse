@@ -8,7 +8,7 @@ Note that now this library is under construction.
 
 ## Usage
 
-At first, make new instnce of a parser with `optparse#new()`, then define options you want to parse with `on({definition}, {description})` funcref.  At last, define command with `parse({args}, [{count}, {bang}, {reg}, {range}])`.  Note that you must use `<a-args>` for `{args}`, `<count>` for `{count}`, `<q-bang>` for `{bang}` and `[<line1>, <line2>]` for `{range}`.
+At first, make new instnce of a parser with `optparse#new()`, then define options you want to parse with `on({definition}, {description})` funcref.  At last, define command with `parse({args}, [{count}, {bang}, {reg}, {range}])`.  Note that you must use `<a-args>` for `{args}`, `<count>` for `{count}`, `<q-bang>` for `{bang}` and `[<line1>, <line2>]` for `{range}`.  This library's interface is inspired by `OptionParser` in Ruby.
 
 ## TODO
 
