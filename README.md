@@ -23,29 +23,29 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 let s:opt = optparse#new()
 
 " define options
-call s:opt.on('--hoge=VALUE', 'this is description of hoge')
-call s:opt.on('--foo', 'this is description of foo')
-call s:opt.on('--bar', 'this is description of bar')
+call s:opt.on('--hoge=VALUE', 'description of hoge, option with value')
+call s:opt.on('--foo', 'description of foo')
+call s:opt.on('--[no-]bar', 'this is description of bar, contradictable')
 
 " define command with the parser
 command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
 
 " execute!
-Hoge! --hoge=huga --bar poyo
+Hoge! --hoge=huga --no-bar poyo
 " => {
 "      '__count__' : 0,
 "      '__bang__' : '!',
 "      'hoge' : 'huga',
-"      'bar' : 1,
+"      'bar' : 0,
 "      '__unknown_args__' : ['poyo'],
 "    }
 
 " show help
 Hoge --help
 " echo following message
-"   --hoge=VALUE : this is description of hoge
-"   --foo        : this is description of foo
-"   --bar        : this is description of bar
+"   --hoge=VALUE : description of hoge, option with value
+"   --foo        : description of foo
+"   --[no-]bar   : this is description of bar, contradictable
 "
 " => {
 "      '__count__' : 0,
