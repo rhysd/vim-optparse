@@ -3,6 +3,21 @@ execute 'set' 'rtp +=./'.s:root_dir
 
 call vspec#matchers#load()
 
+function! s:permutation(args)
+    if len(a:args) <= 1
+        return [[a:args[0]]]
+    endif
+    let ret = []
+    for a in a:args
+        let r = filter(copy(a:args), 'v:val != a')
+        let p = s:permutation(r)
+        for i in p
+            call add(ret, [a] + i)
+        endfor
+    endfor
+    return ret
+endfunction
+
 describe 'g:Opt.parse()'
     before
         let g:O = optparse#new()
@@ -90,18 +105,9 @@ describe 'g:Opt.parse()'
         call g:O.on('--huga=VALUE', '')
         call g:O.on('--[no-]poyo', '')
         let args = ['--hoge', '--huga=foo', '--no-poyo', 'unknown_arg']
-        " TODO use recursive
-        for c1 in args
-            let r1 = filter(copy(args), 'v:val != c1')
-            for c2 in r1
-                let r2 = filter(copy(r1), 'v:val != c2')
-                for c3 in r2
-                    let r3 = filter(copy(r2), 'v:val != c3')
-                    let c4 = r3[0]
-                    let args_string = join([c1, c2, c3, c4], ' ')
-                    Expect g:O.parse(args_string) == {'__unknown_args__' : ['unknown_arg'], 'hoge' : 1, 'huga' : 'foo', 'poyo' : 0}
-                endfor
-            endfor
+        let perms = s:permutation(args)
+        for p in perms
+            Expect g:O.parse(join(p, ' ')) == {'__unknown_args__' : ['unknown_arg'], 'hoge' : 1, 'huga' : 'foo', 'poyo' : 0}
         endfor
     end
 end
