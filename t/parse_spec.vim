@@ -99,7 +99,49 @@ describe 'g:Opt.parse()'
         let args = ['--hoge', '--huga=foo', '--no-poyo', 'unknown_arg']
         let perms = s:permutation(args)
         for p in perms
-            Expect g:O.parse(join(p, ' ')) == {'__unknown_args__' : ['unknown_arg'], 'hoge' : 1, 'huga' : 'foo', 'poyo' : 0}
+            Expect g:O.parse(join(p, ' ')) ==
+                        \ {'__unknown_args__' : ['unknown_arg'], 'hoge' : 1, 'huga' : 'foo', 'poyo' : 0}
+        endfor
+    end
+
+    it 'parses all options defined with on() and command options at one time refardless of the order of arguments'
+        call g:O.on('--hoge', '')
+        call g:O.on('--huga=VALUE', '')
+        call g:O.on('--[no-]poyo', '')
+        let args = map(s:permutation(['--hoge', '--huga=foo', '--no-poyo', 'unknown_arg']), 'join(v:val, " ")')
+        let opts_count = s:permutation(['g', 42, '!'])
+        let opts_range = s:permutation(['g', [1, 100], '!'])
+
+        " command with <count>
+        for a in args
+            for oc in opts_count
+                Expect call(g:O.parse, [a] + oc, g:O) ==
+                            \ {
+                            \   '__unknown_args__' : ['unknown_arg'],
+                            \   '__count__' : 42,
+                            \   '__bang__' : '!',
+                            \   '__reg__' : 'g',
+                            \   'hoge' : 1,
+                            \   'huga' : 'foo',
+                            \   'poyo' : 0
+                            \ }
+            endfor
+        endfor
+
+        " command with <range>
+        for a in args
+            for or in opts_range
+                Expect call(g:O.parse, [a] + or, g:O) ==
+                            \ {
+                            \   '__unknown_args__' : ['unknown_arg'],
+                            \   '__range__' : [1, 100],
+                            \   '__bang__' : '!',
+                            \   '__reg__' : 'g',
+                            \   'hoge' : 1,
+                            \   'huga' : 'foo',
+                            \   'poyo' : 0
+                            \ }
+            endfor
         endfor
     end
 end
