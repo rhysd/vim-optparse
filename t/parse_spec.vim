@@ -7,13 +7,12 @@ function! s:permutation(args)
     if len(a:args) <= 1
         return [[a:args[0]]]
     endif
+
     let ret = []
     for a in a:args
-        let r = filter(copy(a:args), 'type(v:val) != type(a) || v:val != a')
-        let p = s:permutation(r)
-        for i in p
-            call add(ret, [a] + i)
-        endfor
+        let xs = filter(copy(a:args), 'type(v:val) != type(a) || v:val != a')
+        let perms = s:permutation(xs)
+        call extend(ret, map(perms, '[a] + v:val'))
         unlet a
     endfor
     return ret
@@ -143,5 +142,11 @@ describe 'g:Opt.parse()'
                             \ }
             endfor
         endfor
+    end
+
+    " corner cases
+    it 'can parse some non alphabetical names and keys'
+        call g:O.on('--''!"#$=VALUE', '')
+        Expect g:O.parse('--''!"#$=''hoge''') == {'__unknown_args__' : [], '''!"#$' : "'hoge'"}
     end
 end
