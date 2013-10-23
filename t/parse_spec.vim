@@ -9,11 +9,12 @@ function! s:permutation(args)
     endif
     let ret = []
     for a in a:args
-        let r = filter(copy(a:args), 'v:val != a')
+        let r = filter(copy(a:args), 'type(v:val) != type(a) || v:val != a')
         let p = s:permutation(r)
         for i in p
             call add(ret, [a] + i)
         endfor
+        unlet a
     endfor
     return ret
 endfunction
@@ -51,25 +52,16 @@ describe 'g:Opt.parse()'
     it 'deals with command special options regardless of the order of and number of arguments'
         " count command
         let cands = ['g', 42, '!']
-        let perms = []
-        for c in cands
-            let rest = filter(deepcopy(cands), 'type(v:val) != type(c) || v:val != c')
-            call add(perms, [c, rest[0], rest[1]])
-            call add(perms, [c, rest[1], rest[0]])
-            unlet c
-        endfor
+        let perms = s:permutation(cands)
         for p in perms
             Expect call(g:O.parse, [''] + p, g:O) == {'__unknown_args__' : [], '__count__' : 42, '__bang__' : '!', '__reg__' : 'g'}
         endfor
 
         " range command
         let cands = ['g', [1, 100], '!']
-        let perms = []
-        for c in cands
-            let rest = filter(copy(cands), 'type(v:val) != type(c) || v:val != c')
-            call add(perms, [c, rest[0], rest[1]])
-            call add(perms, [c, rest[1], rest[0]])
-            unlet c
+        let perms = s:permutation(cands)
+        for p in perms
+            Expect call(g:O.parse, [''] + p, g:O) == {'__unknown_args__' : [], '__range__' : [1, 100], '__bang__' : '!', '__reg__' : 'g'}
         endfor
     end
 
