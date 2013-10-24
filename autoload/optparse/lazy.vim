@@ -60,7 +60,9 @@ function! s:is_key_value(arg)
 endfunction
 
 function! s:parse_args(q_args, options)
-    let args = split(a:q_args)
+    if type(a:q_args) != type([])
+        let args = split(a:q_args)
+    endif
     let parsed_args = {}
     let unknown_args = []
 
