@@ -74,6 +74,7 @@ function! s:parse_args(q_args, options)
             for [name, value] in items(a:options)
                 if has_key(value, 'short_option_definition') && value.short_option_definition ==# short_opt
                     let arg = substitute(arg, short_opt, '--'.name, '')
+                    break
                 endif
             endfor
         endif
