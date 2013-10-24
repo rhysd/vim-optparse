@@ -69,7 +69,7 @@ function! s:make_args(cmd_args)
     endif
 endfunction
 
-function! s:extract_short_option(arg, options)
+function! s:expand_short_option(arg, options)
     let short_opt = matchstr(a:arg, '^-[^- =]\>')
     for [name, value] in items(a:options)
         if has_key(value, 'short_option_definition') && value.short_option_definition ==# short_opt
@@ -121,7 +121,7 @@ function! s:parse_args(cmd_args, options)
 
         " replace short option with long option if short option is available
         if arg =~# '^-[^- =]\>'
-            let arg = s:extract_short_option(arg, a:options)
+            let arg = s:expand_short_option(arg, a:options)
         endif
 
         " check if arg is --[no-]hoge[=VALUE]
