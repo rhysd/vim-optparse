@@ -39,7 +39,7 @@ function! s:on(...) dict
 
     " if short option is specified
     if a:0 == 3
-        if ! a:2 !~# '^-\S$'
+        if a:2 !~# '^-[^- =]$'
             echoerr 'Short option is invalid: '.a:2
             return
         endif
