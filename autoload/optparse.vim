@@ -46,6 +46,8 @@ function! s:on(...) dict
 
         let self.options[name].short_option_definition = a:2
     endif
+
+    return self
 endfunction
 
 function! optparse#new()

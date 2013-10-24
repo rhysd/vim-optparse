@@ -16,11 +16,12 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 " make option parser instance
 let s:opt = optparse#new()
 
-" define options
+" define option
 call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
 call s:opt.on('--foo', 'description of foo')
+" definitions can chain
 call s:opt.on('--[no-]bar', 'description of bar, contradictable')
-call s:opt.on('--baz', '-b', 'description of baz, has short option')
+         \.on('--baz', '-b', 'description of baz, has short option')
 
 " define command with the parser
 command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)

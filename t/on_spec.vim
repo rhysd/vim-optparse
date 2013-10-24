@@ -54,6 +54,17 @@ describe 'g:Opt.on()'
         Expect g:Opt.options.hoge == {'description': 'huga', 'definition': '--[no-]hoge', 'no': 1}
     end
 
+    it 'can chain definitions of options'
+        call g:Opt.on('--hoge', '')
+                 \.on('--huga', '')
+                 \.on('--piyo', '')
+                 \.on('--poyo', '')
+        Expect g:Opt.options to_have_key 'hoge'
+        Expect g:Opt.options to_have_key 'huga'
+        Expect g:Opt.options to_have_key 'piyo'
+        Expect g:Opt.options to_have_key 'poyo'
+    end
+
     " TODO more invalid names
     it 'occurs an error when invalid option name is specified'
         Expect "call g:Opt.on('invalid_name', '')" to_throw_exception
