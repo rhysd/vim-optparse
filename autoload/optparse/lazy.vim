@@ -12,13 +12,27 @@ function! s:max_len(arr)
     return max_len
 endfunction
 
-function! s:show_help(options)
-    let key_width = s:max_len(map(values(a:options), "v:val.definition"))
-    echo join(map(values(a:options), '
-                \ v:val.definition .
-                \ repeat(" ", key_width - len(v:val.definition)) . " : " .
-                \ v:val.description
+function! s:make_option_definition_for_help(opt)
+    let key = a:opt.definition
+    if has_key(a:opt, 'short_option_definition')
+        let key .= ' '.a:opt.short_option_definition
+    endif
+    return key
+endfunction
+
+function! s:make_help_message(options)
+    let definitions = map(values(a:options), "[s:make_option_definition_for_help(v:val), v:val.description]")
+    let key_width = s:max_len(map(copy(definitions), 'v:val[0]'))
+    return "Options:\n" .
+        \ join(map(definitions, '
+                \ "  " . v:val[0] .
+                \ repeat(" ", key_width - len(v:val[0])) . " : " .
+                \ v:val[1]
                 \ '), "\n")
+endfunction
+
+function! s:show_help(options)
+    echo s:make_help_message(a:options)
 endfunction
 
 function! s:extract_special_opts(argc, argv)
