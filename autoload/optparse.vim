@@ -52,6 +52,7 @@ function! optparse#new()
     return { 'options' : {},
            \ 'on' : function(s:SID.'on'),
            \ 'parse' : function('optparse#lazy#parse'),
+           \ 'help' : function('optparse#lazy#help_message'),
            \ }
 endfunction
 
