@@ -40,10 +40,10 @@ Hoge! --hoge=huga --no-bar poyo -b
 Hoge --help
 " echo following message
 "   Options:
-"     --hoge=VALUE : description of hoge, option with value
+"     --hoge=VALUE : description of hoge, must have value
 "     --foo        : description of foo
 "     --[no-]bar   : description of bar, contradictable
-"     --baz -b     : description of baz, has short option
+"     --baz, -b    : description of baz, has short option
 "
 " => {
 "      '__count__' : 0,

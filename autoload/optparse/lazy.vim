@@ -15,7 +15,7 @@ endfunction
 function! s:make_option_definition_for_help(opt)
     let key = a:opt.definition
     if has_key(a:opt, 'short_option_definition')
-        let key .= ' '.a:opt.short_option_definition
+        let key .= ', '.a:opt.short_option_definition
     endif
     return key
 endfunction
