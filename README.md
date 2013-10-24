@@ -12,8 +12,8 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 
 ## TODO
 
-- short options
-- add tests(wip)
+- short options(wip)
+- add tests
 - refactorings
 
 ## Example

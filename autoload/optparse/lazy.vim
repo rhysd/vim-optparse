@@ -55,6 +55,17 @@ function! s:parse_args(q_args, options)
     let unknown_args = []
 
     for arg in args
+
+        " replace short option with long option if short option is available
+        if arg =~# '^-[^- =]\>'
+            let short_opt = matchstr(arg, '^-[^- =]\>')
+            for [name, value] in items(a:options)
+                if has_key(value, 'short_option_definition') && value.short_option_definition ==# short_opt
+                    let arg = substitute(arg, short_opt, '--'.name, '')
+                endif
+            endfor
+        endif
+
         if s:is_key_value(arg)
 
             " if --no-hoge pattern
