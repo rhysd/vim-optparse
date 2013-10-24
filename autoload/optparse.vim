@@ -8,7 +8,7 @@ let s:SID = s:get_SID()
 delfunction s:get_SID
 
 function! s:on(...) dict
-    if a:0 == 2
+    if a:0 == 2 || a:0 == 3
 
         " get hoge and huga from --hoge=huga
         let [name, value] = matchlist(a:1, '^--\([^= ]\+\)\(=\S\+\)\=$')[1:2]
@@ -22,20 +22,25 @@ function! s:on(...) dict
         endif
 
         if name == ''
-            echoerr 'Option of key is invalid: '.name
+            echoerr 'Option of key is invalid: '.a:1
         else
-            let self.options[name] = {'definition' : a:1, 'description' : a:2}
+            let self.options[name] = {'definition' : a:1, 'description' : a:000[-1]}
             if exists('l:no')
                 let self.options[name].no = 1
             endif
             if exists('l:has_value')
                 let self.options[name].has_value = 1
             endif
-        endif
 
-    elseif a:0 == 3
-        " short options like -h for --hoge
-        throw "Not implemented"
+            " if short option is specified
+            if a:0 == 3
+                if ! a:2 !~# '^-\S$'
+                    echoerr 'Short option is invalid: '.a:2
+                endif
+
+                let self.options[name].short_option_definition = a:2
+            endif
+        endif
     else
         echoerr 'Wrong number of arguments ('.a:0.' for 2 or 3)'
     endif
