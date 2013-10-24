@@ -48,15 +48,10 @@ function! s:on(...) dict
     endif
 endfunction
 
-" separate parse function to other file to load functions lazily
-function! s:parse(...) dict
-    return call('optparse#lazy#parse', a:000, self)
-endfunction
-
 function! optparse#new()
     return { 'options' : {},
            \ 'on' : function(s:SID.'on'),
-           \ 'parse' : function(s:SID.'parse'),
+           \ 'parse' : function('optparse#lazy#parse'),
            \ }
 endfunction
 
