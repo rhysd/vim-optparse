@@ -53,8 +53,7 @@ Hoge --help
 
 ## TODO
 
-- add tests(wip)
-- refactorings
+- refactorings(wip)
 - documentation
 
 
