@@ -21,5 +21,7 @@ describe 'optparse#new()'
         Expect g:Opt.on to_be_funcref
         Expect g:Opt to_have_key 'parse'
         Expect g:Opt.parse to_be_funcref
+        Expect g:Opt to_have_key 'help'
+        Expect g:Opt.help to_be_funcref
     end
 end
