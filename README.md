@@ -26,26 +26,30 @@ let s:opt = optparse#new()
 call s:opt.on('--hoge=VALUE', 'description of hoge, option with value')
 call s:opt.on('--foo', 'description of foo')
 call s:opt.on('--[no-]bar', 'this is description of bar, contradictable')
+call s:opt.on('--baz', '-b', 'description of baz, has short option')
 
 " define command with the parser
 command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
 
 " execute!
-Hoge! --hoge=huga --no-bar poyo
+Hoge! --hoge=huga --no-bar poyo -b
 " => {
 "      '__count__' : 0,
 "      '__bang__' : '!',
 "      'hoge' : 'huga',
 "      'bar' : 0,
+"      'baz' : 1,
 "      '__unknown_args__' : ['poyo'],
 "    }
 
 " show help
 Hoge --help
 " echo following message
-"   --hoge=VALUE : description of hoge, option with value
-"   --foo        : description of foo
-"   --[no-]bar   : this is description of bar, contradictable
+"   Options:
+"     --hoge=VALUE : description of hoge, option with value
+"     --foo        : description of foo
+"     --[no-]bar   : this is description of bar, contradictable
+"     --baz -b     : this is description of baz, has short option
 "
 " => {
 "      '__count__' : 0,
