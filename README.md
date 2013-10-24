@@ -17,7 +17,7 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 let s:opt = optparse#new()
 
 " define options
-call s:opt.on('--hoge=VALUE', 'description of hoge, option with value')
+call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
 call s:opt.on('--foo', 'description of foo')
 call s:opt.on('--[no-]bar', 'description of bar, contradictable')
 call s:opt.on('--baz', '-b', 'description of baz, has short option')
