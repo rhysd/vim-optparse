@@ -54,17 +54,22 @@ function! s:extract_special_opts(argc, argv)
     return ret
 endfunction
 
-function! s:is_key_value(arg)
-    " check if arg is --[no-]hoge[=VALUE]
-    return a:arg =~# '^--\%(no-\)\=[^= ]\+\%(=\S\+\)\=$'
+function! s:make_args(cmd_args)
+    let type = type(a:cmd_args)
+    if type == type('')
+        return split(a:cmd_args)
+    elseif type == type([])
+        return map(copy(a:cmd_args, 'type(v:val) == type("") ? v:val : string(v:val)'))
+    else
+        echoerr 'Invalid type: first argument of parse() should string or list of string'
+        return []
+    endif
 endfunction
 
-function! s:parse_args(q_args, options)
-    if type(a:q_args) != type([])
-        let args = split(a:q_args)
-    endif
+function! s:parse_args(cmd_args, options)
     let parsed_args = {}
     let unknown_args = []
+    let args = s:make_args(a:cmd_args)
 
     for arg in args
 
@@ -79,7 +84,8 @@ function! s:parse_args(q_args, options)
             endfor
         endif
 
-        if s:is_key_value(arg)
+        " check if arg is --[no-]hoge[=VALUE]
+        if arg =~# '^--\%(no-\)\=[^= ]\+\%(=\S\+\)\=$'
 
             " if --no-hoge pattern
             if arg =~# '^--no-[^= ]\+'
