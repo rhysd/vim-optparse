@@ -81,6 +81,12 @@ describe 'g:Opt.parse()'
         Expect g:O.parse('--hoge') == {'__unknown_args__' : [], 'hoge' : 1}
     end
 
+    it 'parses short option -h as ''hoge'''
+        call g:O.on('--hoge', '-h', 'huga')
+        Expect g:O.parse('-h') == {'__unknown_args__' : [], 'hoge' : 1}
+        Expect g:O.parse('--hoge') == {'__unknown_args__' : [], 'hoge' : 1}
+    end
+
     it 'doesn''t parse arguments not defined with on()'
         call g:O.on('--foo', 'huga')
         call g:O.on('--bar=VALUE', 'huga')
@@ -106,8 +112,9 @@ describe 'g:Opt.parse()'
     it 'parses all options defined with on() and command options at one time refardless of the order of arguments'
         call g:O.on('--hoge', '')
         call g:O.on('--huga=VALUE', '')
+        call g:O.on('--tsura', '-t', '')
         call g:O.on('--[no-]poyo', '')
-        let args = map(s:permutation(['--hoge', '--huga=foo', '--no-poyo', 'unknown_arg']), 'join(v:val, " ")')
+        let args = map(s:permutation(['--hoge', '--huga=foo', '--no-poyo', '-t', 'unknown_arg']), 'join(v:val, " ")')
         let opts_count = s:permutation(['g', 42, '!'])
         let opts_range = s:permutation(['g', [1, 100], '!'])
 
@@ -122,7 +129,8 @@ describe 'g:Opt.parse()'
                             \   '__reg__' : 'g',
                             \   'hoge' : 1,
                             \   'huga' : 'foo',
-                            \   'poyo' : 0
+                            \   'tsura' : 1,
+                            \   'poyo' : 0,
                             \ }
             endfor
         endfor
@@ -138,6 +146,7 @@ describe 'g:Opt.parse()'
                             \   '__reg__' : 'g',
                             \   'hoge' : 1,
                             \   'huga' : 'foo',
+                            \   'tsura' : 1,
                             \   'poyo' : 0
                             \ }
             endfor
