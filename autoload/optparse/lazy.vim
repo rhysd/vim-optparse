@@ -1,6 +1,9 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
+let s:STRING_TYPE = type('')
+let s:LIST_TYPE = type([])
+
 function! s:max_len(arr)
     let max_len = 1
     for i in a:arr
@@ -37,11 +40,11 @@ function! s:extract_special_opts(argc, argv)
         let ret.q_args = a:argv[0]
         for arg in a:argv[1:]
             let arg_type = type(arg)
-            if arg_type == type([])
+            if arg_type == s:LIST_TYPE
                 let ret.specials.__range__ = arg
             elseif arg_type == type(0)
                 let ret.specials.__count__ = arg
-            elseif arg_type == type('')
+            elseif arg_type == s:STRING_TYPE
                 if arg ==# '!'
                     let ret.specials.__bang__ = arg
                 elseif arg != ''
@@ -56,14 +59,57 @@ endfunction
 
 function! s:make_args(cmd_args)
     let type = type(a:cmd_args)
-    if type == type('')
+    if type == s:STRING_TYPE
         return split(a:cmd_args)
-    elseif type == type([])
-        return map(copy(a:cmd_args, 'type(v:val) == type("") ? v:val : string(v:val)'))
+    elseif type == s:LIST_TYPE
+        return map(copy(a:cmd_args, 'type(v:val) == s:STRING_TYPE ? v:val : string(v:val)'))
     else
         echoerr 'Invalid type: first argument of parse() should string or list of string'
         return []
     endif
+endfunction
+
+function! s:extract_short_option(arg, options)
+    let short_opt = matchstr(a:arg, '^-[^- =]\>')
+    for [name, value] in items(a:options)
+        if has_key(value, 'short_option_definition') && value.short_option_definition ==# short_opt
+            return substitute(a:arg, short_opt, '--'.name, '')
+        endif
+    endfor
+    return a:arg
+endfunction
+
+function! s:parse_arg(arg, options)
+    " if --no-hoge pattern
+    if a:arg =~# '^--no-[^= ]\+'
+        " get hoge from --no-hoge
+        let key = matchstr(a:arg, '^--no-\zs[^= ]\+')
+        if has_key(a:options, key) && has_key(a:options[key], 'no')
+            return [key, 0]
+        endif
+
+    " if --hoge pattern
+    elseif a:arg =~# '^--[^= ]\+$'
+        " get hoge from --hoge
+        let key = matchstr(a:arg, '^--\zs[^= ]\+')
+        if has_key(a:options, key)
+            if has_key(a:options[key], 'has_value')
+                echoerr 'Must specify value for option: '.key
+            endif
+            return [key, 1]
+        endif
+
+    " if --hoge=poyo pattern
+    else
+        " get hoge from --hoge=poyo
+        let key = matchstr(a:arg, '^--\zs[^= ]\+')
+        if has_key(a:options, key)
+            " get poyo from --hoge=poyo
+            return [key, matchstr(a:arg, '^--[^= ]\+=\zs\S\+$')]
+        endif
+    endif
+
+    return a:arg
 endfunction
 
 function! s:parse_args(cmd_args, options)
@@ -75,55 +121,20 @@ function! s:parse_args(cmd_args, options)
 
         " replace short option with long option if short option is available
         if arg =~# '^-[^- =]\>'
-            let short_opt = matchstr(arg, '^-[^- =]\>')
-            for [name, value] in items(a:options)
-                if has_key(value, 'short_option_definition') && value.short_option_definition ==# short_opt
-                    let arg = substitute(arg, short_opt, '--'.name, '')
-                    break
-                endif
-            endfor
+            let arg = s:extract_short_option(arg, a:options)
         endif
 
         " check if arg is --[no-]hoge[=VALUE]
-        if arg =~# '^--\%(no-\)\=[^= ]\+\%(=\S\+\)\=$'
-
-            " if --no-hoge pattern
-            if arg =~# '^--no-[^= ]\+'
-                " get hoge from --no-hoge
-                let key = matchstr(arg, '^--no-\zs[^= ]\+')
-                if has_key(a:options, key) && has_key(a:options[key], 'no')
-                    let parsed_args[key] = 0
-                else
-                    call add(unknown_args, arg)
-                endif
-
-            " if --hoge pattern
-            elseif arg =~# '^--[^= ]\+$'
-                " get hoge from --hoge
-                let key = matchstr(arg, '^--\zs[^= ]\+')
-                if has_key(a:options, key)
-                    if has_key(a:options[key], 'has_value')
-                        echoerr 'Must specify value for option: '.key
-                    endif
-                    let parsed_args[key] = 1
-                else
-                    call add(unknown_args, arg)
-                endif
-
-            " if --hoge=poyo pattern
-            else
-                " get hoge from --hoge=poyo
-                let key = matchstr(arg, '^--\zs[^= ]\+')
-                if has_key(a:options, key)
-                    " get poyo from --hoge=poyo
-                    let parsed_args[key] = matchstr(arg, '^--[^= ]\+=\zs\S\+$')
-                else
-                    call add(unknown_args, arg)
-                endif
-            endif
-
-        else
+        if arg !~# '^--\%(no-\)\=[^= ]\+\%(=\S\+\)\=$'
             call add(unknown_args, arg)
+            continue
+        endif
+
+        let parsed_arg = s:parse_arg(arg, a:options)
+        if type(parsed_arg) == s:LIST_TYPE
+            let parsed_args[parsed_arg[0]] = parsed_arg[1]
+        else
+            call add(unknown_args, parsed_arg)
         endif
     endfor
 
