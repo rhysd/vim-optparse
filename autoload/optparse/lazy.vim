@@ -20,8 +20,8 @@ function! s:make_option_definition_for_help(opt)
     return key
 endfunction
 
-function! optparse#lazy#help_message(options)
-    let definitions = map(values(a:options), "[s:make_option_definition_for_help(v:val), v:val.description]")
+function! optparse#lazy#help_message() dict
+    let definitions = map(values(self.options), "[s:make_option_definition_for_help(v:val), v:val.description]")
     let key_width = s:max_len(map(copy(definitions), 'v:val[0]'))
     return "Options:\n" .
         \ join(map(definitions, '
@@ -130,7 +130,7 @@ function! optparse#lazy#parse(...) dict
     if ! get(self, 'disable_auto_help', 0)
       \  && opts.q_args ==# '--help'
       \  && ! has_key(self.options, 'help')
-        echo optparse#lazy#help_message(self.options)
+        echo call('optparse#lazy#help_message', [], self)
         return extend(opts.specials, {'help' : 1})
     endif
 
