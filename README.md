@@ -12,9 +12,9 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 
 ## TODO
 
-- short options(wip)
-- add tests
+- add tests(wip)
 - refactorings
+- documentation
 
 ## Example
 
