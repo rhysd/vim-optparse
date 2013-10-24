@@ -10,12 +10,6 @@ Note that now this library is under construction.
 
 At first, make new instnce of a parser with `optparse#new()`, then define options you want to parse with `on({definition} [, {short definition}], {description})` funcref.  At last, define command with `parse({args}, [{count}, {bang}, {reg}, {range}])`.  Note that you must use `<q-args>` for `{args}`, `<count>` for `{count}`, `<q-bang>` for `{bang}` and `[<line1>, <line2>]` for `{range}`.  This library's interface is inspired by `OptionParser` in Ruby.
 
-## TODO
-
-- add tests(wip)
-- refactorings
-- documentation
-
 ## Example
 
 ```vim
@@ -25,7 +19,7 @@ let s:opt = optparse#new()
 " define options
 call s:opt.on('--hoge=VALUE', 'description of hoge, option with value')
 call s:opt.on('--foo', 'description of foo')
-call s:opt.on('--[no-]bar', 'this is description of bar, contradictable')
+call s:opt.on('--[no-]bar', 'description of bar, contradictable')
 call s:opt.on('--baz', '-b', 'description of baz, has short option')
 
 " define command with the parser
@@ -48,14 +42,21 @@ Hoge --help
 "   Options:
 "     --hoge=VALUE : description of hoge, option with value
 "     --foo        : description of foo
-"     --[no-]bar   : this is description of bar, contradictable
-"     --baz -b     : this is description of baz, has short option
+"     --[no-]bar   : description of bar, contradictable
+"     --baz -b     : description of baz, has short option
 "
 " => {
 "      '__count__' : 0,
 "      'help' : 1,
 "    }
 ```
+
+## TODO
+
+- add tests(wip)
+- refactorings
+- documentation
+
 
 ## License
 
