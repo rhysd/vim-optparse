@@ -8,41 +8,43 @@ let s:SID = s:get_SID()
 delfunction s:get_SID
 
 function! s:on(...) dict
-    if a:0 == 2 || a:0 == 3
-
-        " get hoge and huga from --hoge=huga
-        let [name, value] = matchlist(a:1, '^--\([^= ]\+\)\(=\S\+\)\=$')[1:2]
-        if value != ''
-            let has_value = 1
-        endif
-
-        if name =~# '^\[no-]'
-            let no = 1
-            let name = matchstr(name, '^\[no-]\zs.\+')
-        endif
-
-        if name == ''
-            echoerr 'Option of key is invalid: '.a:1
-        else
-            let self.options[name] = {'definition' : a:1, 'description' : a:000[-1]}
-            if exists('l:no')
-                let self.options[name].no = 1
-            endif
-            if exists('l:has_value')
-                let self.options[name].has_value = 1
-            endif
-
-            " if short option is specified
-            if a:0 == 3
-                if ! a:2 !~# '^-\S$'
-                    echoerr 'Short option is invalid: '.a:2
-                endif
-
-                let self.options[name].short_option_definition = a:2
-            endif
-        endif
-    else
+    if ! (a:0 == 2 || a:0 == 3)
         echoerr 'Wrong number of arguments ('.a:0.' for 2 or 3)'
+        return
+    endif
+
+    " get hoge and huga from --hoge=huga
+    let [name, value] = matchlist(a:1, '^--\([^= ]\+\)\(=\S\+\)\=$')[1:2]
+    if value != ''
+        let has_value = 1
+    endif
+
+    if name =~# '^\[no-]'
+        let no = 1
+        let name = matchstr(name, '^\[no-]\zs.\+')
+    endif
+
+    if name == ''
+        echoerr 'Option of key is invalid: '.a:1
+        return
+    endif
+
+    let self.options[name] = {'definition' : a:1, 'description' : a:000[-1]}
+    if exists('l:no')
+        let self.options[name].no = 1
+    endif
+    if exists('l:has_value')
+        let self.options[name].has_value = 1
+    endif
+
+    " if short option is specified
+    if a:0 == 3
+        if ! a:2 !~# '^-\S$'
+            echoerr 'Short option is invalid: '.a:2
+            return
+        endif
+
+        let self.options[name].short_option_definition = a:2
     endif
 endfunction
 
