@@ -64,7 +64,7 @@ function! s:make_args(cmd_args)
     elseif type == s:LIST_TYPE
         return map(copy(a:cmd_args, 'type(v:val) == s:STRING_TYPE ? v:val : string(v:val)'))
     else
-        echoerr 'Invalid type: first argument of parse() should string or list of string'
+        echoerr 'Invalid type: first argument of parse() should be string or list of string'
         return []
     endif
 endfunction
