@@ -26,6 +26,49 @@ of the order of arguments.
 USAGE                                                           *optparse-usage*
 
 
+At first, make new instnce of a parser with |optparse#new()|, then define
+options you want to parse with |OptionParser.on()|.  At last, define command
+with |OptionParser.parse()|.
+This library's interface is inspired by OptionParser in Ruby.
+>
+    " make option parser instance
+    let s:opt = optparse#new()
+
+    " define option
+    call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
+    call s:opt.on('--foo', 'description of foo')
+    " definitions can chain
+    call s:opt.on('--[no-]bar', 'description of bar, contradictable')
+            \.on('--baz', '-b', 'description of baz, has short option')
+
+    " define command with the parser
+    command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
+
+    " execute!
+    Hoge! --hoge=huga --no-bar poyo -b
+    " => {
+    "      '__count__' : 0,
+    "      '__bang__' : '!',
+    "      'hoge' : 'huga',
+    "      'bar' : 0,
+    "      'baz' : 1,
+    "      '__unknown_args__' : ['poyo'],
+    "    }
+
+    " show help
+    Hoge --help
+    " echo following message
+    "   Options:
+    "     --hoge=VALUE : description of hoge, must have value
+    "     --foo        : description of foo
+    "     --[no-]bar   : description of bar, contradictable
+    "     --baz, -b    : description of baz, has short option
+    "
+    " => {
+    "      '__count__' : 0,
+    "      'help' : 1,
+    "    }
+<
 
 ==============================================================================
 INSTALL                                                       *optparse-install*
@@ -37,6 +80,8 @@ directories in autoload/ directories to your vim config directory.  vim config
 directory is usually $HOME/vimfiles on Windows or ~/.vim in other operating
 systems.
 
+If you want to bundle |optparse| in Vim plugins, copy files in autoload/ to
+your_plugin/autoload/optparse and fix autoload functions' names.
 
 
 ==============================================================================
