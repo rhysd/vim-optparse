@@ -53,8 +53,7 @@ Hoge --help
 
 ## TODO
 
-- refactorings(wip)
-- documentation
+- documentation(wip)
 
 
 ## License
