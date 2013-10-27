@@ -3,8 +3,7 @@ Option parser for Vim script
 
 [![Build Status](https://travis-ci.org/rhysd/vim-optparse.png?branch=master)](https://travis-ci.org/rhysd/vim-optparse)
 
-This is an option parser for Vim script. It can parse `--key=VALUE` arguments and command options such as `<count>`, `<bang>` and so on.
-Note that now this library is under construction.
+This is an option parser library for Vim script. It can parse `--key=VALUE` arguments and command options such as `<count>`, `<bang>` and so on.
 
 ## Usage
 
