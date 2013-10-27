@@ -1,4 +1,4 @@
-*optparse.txt*                                            Option parser for Vim.
+*vim-optparse.txt*                                        Option parser for Vim.
 
 Author : rhysd <lin90162@yahoo.co.jp>
 
