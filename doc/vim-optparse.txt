@@ -92,11 +92,15 @@ documentation of your plugin following MIT license.
 ==============================================================================
 FUNCTIONS                                                   *optparse-functions*
 
+optparse#new()                                                  *optparse#new()*
 
 
 ==============================================================================
 OPTION PARSER                                           *optparse-option-parser*
 
+OptionParser.on({name} [, {short-name}], {description})      *OptionParser.on()*
+OptionParser.parse({q-args} [, {cmd-attributes}...])      *OptionParser.parse()*
+OptionParser.help()                                        *OptionParser.help()*
 
 
 ==============================================================================
