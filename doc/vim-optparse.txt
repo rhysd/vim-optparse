@@ -17,7 +17,7 @@ INTRODUCTION                                             *optparse-introduction*
 
 *optparse* is an option parser library for Vim script.
 It can parse key-value style options(like --foo=bar) in Vim commands and
-|command| options like <count>, <bang>, <range> and so on.
+|:command| attributes like <count>, <bang>, <range> and so on.
 A great advantage of key-value type arguments is that you need not take care
 of the order of arguments.
 
@@ -25,8 +25,7 @@ of the order of arguments.
 ==============================================================================
 USAGE                                                           *optparse-usage*
 
-
-At first, make new instnce of a parser with |optparse#new()|, then define
+At first, make new instance of a parser with |optparse#new()|, then define
 options you want to parse with |OptionParser.on()|.  At last, define command
 with |OptionParser.parse()|.
 This library's interface is inspired by OptionParser in Ruby.
@@ -39,7 +38,7 @@ This library's interface is inspired by OptionParser in Ruby.
     call s:opt.on('--foo', 'description of foo')
     " definitions can chain
     call s:opt.on('--[no-]bar', 'description of bar, contradictable')
-            \.on('--baz', '-b', 'description of baz, has short option')
+             \.on('--baz', '-b', 'description of baz, has short option')
 
     " define command with the parser
     command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
@@ -76,12 +75,18 @@ INSTALL                                                       *optparse-install*
 Using Vim plugin package manager is recommended.  I use |neobundle| and |vundle|
 seems the most famous.
 If you want to install manually, it is not recommended, copy files and
-directories in autoload/ directories to your vim config directory.  vim config
+directories in autoload/ directory to your vim config directory.  vim config
 directory is usually $HOME/vimfiles on Windows or ~/.vim in other operating
 systems.
 
-If you want to bundle |optparse| in Vim plugins, copy files in autoload/ to
-your_plugin/autoload/optparse and fix autoload functions' names.
+If you want to bundle |optparse| in Vim plugins, copy files as below and fix
+autoload functions' names.
+>
+  optparse/autoload/optparse.vim -> your_plugin/autoload/your_plugin/optparse.vim
+  optparse/autoload/optparse/* -> your_plugin/autoload/your_plugin/optparse/*
+<
+In this case, write below copyright notice and permission notice to
+documentation of your plugin following MIT license.
 
 
 ==============================================================================
@@ -102,7 +107,6 @@ https://github.com/rhysd/vim-optparse
 
 Contributions (pull requests) are welcome. None of them are too short.
 Especially, English check is very helpful because I'm poor at English :(
-
 
 
 ==============================================================================
