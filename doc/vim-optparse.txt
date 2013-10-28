@@ -94,11 +94,42 @@ FUNCTIONS                                                   *optparse-functions*
 
 optparse#new()                                                  *optparse#new()*
 
+    Make an option parser instance.  It returns |Dictionary| which is like an
+    object in OOP.  You can define options in this instance and parse
+    arguments with this instance.
+
 
 ==============================================================================
 OPTION PARSER INTERFACE                       *optparse-option-parser-interface*
 
 OptionParser.on({name} [, {short-name}], {description})      *OptionParser.on()*
+
+    Define a option to parse.  You should call this function every option.
+
+      - {name}
+        |String| value.  a name of option.
+        {name} can be one of the below patterns. foo is an example of option
+        name.
+
+          - "--foo"
+            Option whose name is "foo".  If it is used with value like
+            "--foo=huga", value of "foo" will be "huga".  If a value is
+            omitted,  value of "foo" will be 1.
+
+          - "--foo=VALUE"
+            Option whose name is "foo" and it must have a value with
+            "--foo=hoge" style.  In that case, Value of "foo" will be "hoge".
+            Name of value, VALUE is only an example of names.  It can be any
+            names.  If a value is omitted, it occurs an error.
+
+          - "--[no-]foo"
+            Option whose name is "foo" and it can be contradicted.  If it is
+            used like "--no-foo", value of "foo" will be 0.
+
+      - {short-name}
+
+      - {description}
+
 OptionParser.parse({q-args} [, {cmd-attributes}...])      *OptionParser.parse()*
 OptionParser.help()                                        *OptionParser.help()*
 
