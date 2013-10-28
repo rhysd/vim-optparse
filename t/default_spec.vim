@@ -8,6 +8,7 @@ describe 'Default settings'
         Expect 'let g:Opt = optparse#new()' not to_throw_exception
         Expect 'call g:Opt.parse("hoge")' not to_throw_exception
         Expect '*optparse#lazy#parse' to_exist
+        Expect '*optparse#lazy#help_message' to_exist
         unlet g:Opt
     end
 end

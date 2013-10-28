@@ -9,7 +9,7 @@ delfunction s:get_SID
 
 function! s:on(...) dict
     if ! (a:0 == 2 || a:0 == 3)
-        echoerr 'Wrong number of arguments ('.a:0.' for 2 or 3)'
+        echoerr 'Wrong number of arguments: '.a:0.' for 2 or 3'
         return
     endif
 
