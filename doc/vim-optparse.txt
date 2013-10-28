@@ -1,0 +1,135 @@
+*optparse.txt*                                            Option parser for Vim.
+
+Author : rhysd <lin90162@yahoo.co.jp>
+
+CONTENTS         *optparse-contents*
+
+Introduction     |optparse-introduction|
+Usage            |optparse-usage|
+Install          |optparse-install|
+Functions        |optparse-functions|
+OptionParser     |optparse-option-parser|
+Repository Page  |optparse-repository-page|
+License          |optparse-license|
+
+==============================================================================
+INTRODUCTION                                             *optparse-introduction*
+
+*optparse* is an option parser library for Vim script.
+It can parse key-value style options(like --foo=bar) in Vim commands and
+|command| options like <count>, <bang>, <range> and so on.
+A great advantage of key-value type arguments is that you need not take care
+of the order of arguments.
+
+
+==============================================================================
+USAGE                                                           *optparse-usage*
+
+
+At first, make new instnce of a parser with |optparse#new()|, then define
+options you want to parse with |OptionParser.on()|.  At last, define command
+with |OptionParser.parse()|.
+This library's interface is inspired by OptionParser in Ruby.
+>
+    " make option parser instance
+    let s:opt = optparse#new()
+
+    " define option
+    call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
+    call s:opt.on('--foo', 'description of foo')
+    " definitions can chain
+    call s:opt.on('--[no-]bar', 'description of bar, contradictable')
+            \.on('--baz', '-b', 'description of baz, has short option')
+
+    " define command with the parser
+    command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
+
+    " execute!
+    Hoge! --hoge=huga --no-bar poyo -b
+    " => {
+    "      '__count__' : 0,
+    "      '__bang__' : '!',
+    "      'hoge' : 'huga',
+    "      'bar' : 0,
+    "      'baz' : 1,
+    "      '__unknown_args__' : ['poyo'],
+    "    }
+
+    " show help
+    Hoge --help
+    " echo following message
+    "   Options:
+    "     --hoge=VALUE : description of hoge, must have value
+    "     --foo        : description of foo
+    "     --[no-]bar   : description of bar, contradictable
+    "     --baz, -b    : description of baz, has short option
+    "
+    " => {
+    "      '__count__' : 0,
+    "      'help' : 1,
+    "    }
+<
+
+==============================================================================
+INSTALL                                                       *optparse-install*
+
+Using Vim plugin package manager is recommended.  I use |neobundle| and |vundle|
+seems the most famous.
+If you want to install manually, it is not recommended, copy files and
+directories in autoload/ directories to your vim config directory.  vim config
+directory is usually $HOME/vimfiles on Windows or ~/.vim in other operating
+systems.
+
+If you want to bundle |optparse| in Vim plugins, copy files in autoload/ to
+your_plugin/autoload/optparse and fix autoload functions' names.
+
+
+==============================================================================
+FUNCTIONS                                                   *optparse-functions*
+
+
+
+==============================================================================
+OPTION PARSER                                           *optparse-option-parser*
+
+
+
+==============================================================================
+REPOSITORY PAGE                                       *optparse-repository-page*
+
+The latest version of |optparse| is available at
+https://github.com/rhysd/vim-optparse
+
+Contributions (pull requests) are welcome. None of them are too short.
+Especially, English check is very helpful because I'm poor at English :(
+
+
+
+==============================================================================
+LICENSE                                                       *optparse-license*
+
+|optparse| is distributed under MIT license.
+
+  Copyright (c) 2013 rhysd
+
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+==============================================================================
+vim:tw=78:colorcolumn=78:ts=8:ft=help:norl:noet:fen:fdl=0:
