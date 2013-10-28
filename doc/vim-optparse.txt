@@ -9,6 +9,7 @@ Usage                     |optparse-usage|
 Install                   |optparse-install|
 Functions                 |optparse-functions|
 OptionParser Interface    |optparse-option-parser-interface|
+  - Special Argument      |optparse-option-parser-interface-special-argument|
 Repository Page           |optparse-repository-page|
 License                   |optparse-license|
 
@@ -106,7 +107,7 @@ OptionParser.on({name} [, {short-name}], {description})      *OptionParser.on()*
 
     Define a option to parse.  You should call this function every option.
 
-      - {name}
+      - {name} (required)
         |String| value.  a name of option.
         {name} can be one of the below patterns. foo is an example of option
         name.
@@ -123,15 +124,22 @@ OptionParser.on({name} [, {short-name}], {description})      *OptionParser.on()*
             names.  If a value is omitted, it occurs an error.
 
           - "--[no-]foo"
-            Option whose name is "foo" and it can be contradicted.  If it is
-            used like "--no-foo", value of "foo" will be 0.
+            Option whose name is "foo" and it is deniable with "no-" prefix.
+            When it is used like "--no-foo", value of "foo" will be 0.
 
-      - {short-name}
+      - {short-name} (optional)
+        |String| value.  Alias of {name}.  It must be "-" and one alphabet
+        like "-f".
 
-      - {description}
+      - {description} (required)
+        |String| value. Description of option.  This is used in "--help"
+        argument.
 
 OptionParser.parse({q-args} [, {cmd-attributes}...])      *OptionParser.parse()*
 OptionParser.help()                                        *OptionParser.help()*
+
+------------------------------------------------------------------------------
+SPECIAL ARGUMENT             *optparse-option-parser-interface-special-argument*
 
 
 ==============================================================================
