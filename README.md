@@ -19,7 +19,7 @@ let s:opt = optparse#new()
 call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
 call s:opt.on('--foo', 'description of foo')
 " definitions can chain
-call s:opt.on('--[no-]bar', 'description of bar, contradictable')
+call s:opt.on('--[no-]bar', 'description of bar, deniable')
          \.on('--baz', '-b', 'description of baz, has short option')
 
 " define command with the parser
@@ -42,7 +42,7 @@ Hoge --help
 "   Options:
 "     --hoge=VALUE : description of hoge, must have value
 "     --foo        : description of foo
-"     --[no-]bar   : description of bar, contradictable
+"     --[no-]bar   : description of bar, deniable
 "     --baz, -b    : description of baz, has short option
 "
 " => {
