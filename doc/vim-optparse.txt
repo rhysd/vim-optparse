@@ -4,13 +4,13 @@ Author : rhysd <lin90162@yahoo.co.jp>
 
 CONTENTS         *optparse-contents*
 
-Introduction     |optparse-introduction|
-Usage            |optparse-usage|
-Install          |optparse-install|
-Functions        |optparse-functions|
-OptionParser     |optparse-option-parser|
-Repository Page  |optparse-repository-page|
-License          |optparse-license|
+Introduction              |optparse-introduction|
+Usage                     |optparse-usage|
+Install                   |optparse-install|
+Functions                 |optparse-functions|
+OptionParser Interface    |optparse-option-parser-interface|
+Repository Page           |optparse-repository-page|
+License                   |optparse-license|
 
 ==============================================================================
 INTRODUCTION                                             *optparse-introduction*
@@ -96,7 +96,7 @@ optparse#new()                                                  *optparse#new()*
 
 
 ==============================================================================
-OPTION PARSER                                           *optparse-option-parser*
+OPTION PARSER INTERFACE                       *optparse-option-parser-interface*
 
 OptionParser.on({name} [, {short-name}], {description})      *OptionParser.on()*
 OptionParser.parse({q-args} [, {cmd-attributes}...])      *OptionParser.parse()*
