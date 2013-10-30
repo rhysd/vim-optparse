@@ -132,10 +132,30 @@ OptionParser.on({name} [, {short-name}], {description})      *OptionParser.on()*
         like "-f".
 
       - {description} (required)
-        |String| value. Description of option.  This is used in "--help"
+        |String| value. Description of option.  This is used for "--help"
         argument.
 
 OptionParser.parse({q-args} [, {cmd-attributes}...])      *OptionParser.parse()*
+
+    Parse command options.
+    {q-args} is |String| value and you must pass <q-arg> to this argument.
+    {cmd-attributes} are command attributes like <range>, <count>, <bang> and
+    so on.  You need not take care of the order of attributes.
+      - {range}
+        You must use |List| of <line1> and <line2>.
+
+      - {count}
+        You must use <count>.
+
+      - {bang}
+        You must use <q-bang>.
+
+      - {reg}
+        You must use <reg> or <register>.
+>
+    command! -range -bang -register Hoge
+        \ echo OptionParser.parse(<q-args>, [<line1>, <line2>], <q-bang>, <reg>)
+<
 OptionParser.help()                                        *OptionParser.help()*
 
 ------------------------------------------------------------------------------
