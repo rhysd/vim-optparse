@@ -9,7 +9,7 @@ Usage                     |optparse-usage|
 Install                   |optparse-install|
 Functions                 |optparse-functions|
 OptionParser Interface    |optparse-option-parser-interface|
-  - Special Argument      |optparse-option-parser-interface-special-argument|
+  - Special Options       |optparse-option-parser-interface-special-options|
 Repository Page           |optparse-repository-page|
 License                   |optparse-license|
 
@@ -158,9 +158,26 @@ OptionParser.parse({q-args} [, {cmd-attributes}...])      *OptionParser.parse()*
 <
 OptionParser.help()                                        *OptionParser.help()*
 
-------------------------------------------------------------------------------
-SPECIAL ARGUMENT             *optparse-option-parser-interface-special-argument*
+    Make output for --help option and return it as |String|.
 
+------------------------------------------------------------------------------
+SPECIAL OPTIONS               *optparse-option-parser-interface-special-options*
+
+    "--help" option is a special option which is available in all commands
+    parsed by |optparse|.  If "--help" echos usage of the command.  Below is
+    an output example.
+>
+   Options:
+     --hoge=VALUE : description of hoge, must have value
+     --foo        : description of foo
+     --[no-]bar   : description of bar, contradictable
+     --baz, -b    : description of baz, has short option
+<
+    If you don't want to use "--help", set OptionParser.disable_auto_help to 1.
+>
+    let s:O = optparse#new()
+    let s:O.disable_auto_help = 1
+<
 
 ==============================================================================
 REPOSITORY PAGE                                       *optparse-repository-page*
