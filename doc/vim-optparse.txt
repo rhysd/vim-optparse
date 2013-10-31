@@ -1,4 +1,4 @@
-*vim-optparse.txt*                                        Option parser for Vim.
+*vim-optparse.txt*                                Option parser library for Vim.
 
 Author : rhysd <lin90162@yahoo.co.jp>
 
@@ -19,8 +19,8 @@ INTRODUCTION                                             *optparse-introduction*
 *optparse* is an option parser library for Vim script.
 It can parse key-value style options(like --foo=bar) in Vim commands and
 |:command| attributes like <count>, <bang>, <range> and so on.
-A great advantage of key-value type arguments is that you need not take care
-of the order of arguments.
+A great advantage of key-value type options is that you need not take care of
+the order of options.
 
 
 ==============================================================================
@@ -31,43 +31,43 @@ options you want to parse with |OptionParser.on()|.  At last, define command
 with |OptionParser.parse()|.
 This library's interface is inspired by OptionParser in Ruby.
 >
-    " make option parser instance
-    let s:opt = optparse#new()
+  " make option parser instance
+  let s:opt = optparse#new()
 
-    " define option
-    call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
-    call s:opt.on('--foo', 'description of foo')
-    " definitions can chain
-    call s:opt.on('--[no-]bar', 'description of bar, contradictable')
-             \.on('--baz', '-b', 'description of baz, has short option')
+  " define option
+  call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
+  call s:opt.on('--foo', 'description of foo')
+  " definitions can chain
+  call s:opt.on('--[no-]bar', 'description of bar, contradictable')
+           \.on('--baz', '-b', 'description of baz, has short option')
 
-    " define command with the parser
-    command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
+  " define command with the parser
+  command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
 
-    " execute!
-    Hoge! --hoge=huga --no-bar poyo -b
-    " => {
-    "      '__count__' : 0,
-    "      '__bang__' : '!',
-    "      'hoge' : 'huga',
-    "      'bar' : 0,
-    "      'baz' : 1,
-    "      '__unknown_args__' : ['poyo'],
-    "    }
+  " execute!
+  Hoge! --hoge=huga --no-bar poyo -b
+  " => {
+  "      '__count__' : 0,
+  "      '__bang__' : '!',
+  "      'hoge' : 'huga',
+  "      'bar' : 0,
+  "      'baz' : 1,
+  "      '__unknown_args__' : ['poyo'],
+  "    }
 
-    " show help
-    Hoge --help
-    " echo following message
-    "   Options:
-    "     --hoge=VALUE : description of hoge, must have value
-    "     --foo        : description of foo
-    "     --[no-]bar   : description of bar, contradictable
-    "     --baz, -b    : description of baz, has short option
-    "
-    " => {
-    "      '__count__' : 0,
-    "      'help' : 1,
-    "    }
+  " show help
+  Hoge --help
+  " echo following message
+  "   Options:
+  "     --hoge=VALUE : description of hoge, must have value
+  "     --foo        : description of foo
+  "     --[no-]bar   : description of bar, contradictable
+  "     --baz, -b    : description of baz, has short option
+  "
+  " => {
+  "      '__count__' : 0,
+  "      'help' : 1,
+  "    }
 <
 
 ==============================================================================
@@ -76,12 +76,12 @@ INSTALL                                                       *optparse-install*
 Using Vim plugin package manager is recommended.  I use |neobundle| and |vundle|
 seems the most famous.
 If you want to install manually, it is not recommended, copy files and
-directories in autoload/ directory to your vim config directory.  vim config
+directories in autoload/ directory to your vim config directory.  Vim config
 directory is usually $HOME/vimfiles on Windows or ~/.vim in other operating
 systems.
 
 If you want to bundle |optparse| in Vim plugins, copy files as below and fix
-autoload functions' names.
+autoload functions' names in autoload/*.
 >
   optparse/autoload/optparse.vim -> your_plugin/autoload/your_plugin/optparse.vim
   optparse/autoload/optparse/* -> your_plugin/autoload/your_plugin/optparse/*
@@ -108,8 +108,8 @@ OptionParser.on({name} [, {short-name}], {description})      *OptionParser.on()*
     Define a option to parse.  You should call this function every option.
 
       - {name} (required)
-        |String| value.  a name of option.
-        {name} can be one of the below patterns. foo is an example of option
+        |String| value.  A name of option.
+        {name} can be one of the below patterns.  foo is an example of option
         name.
 
           - "--foo"
@@ -128,11 +128,11 @@ OptionParser.on({name} [, {short-name}], {description})      *OptionParser.on()*
             When it is used like "--no-foo", value of "foo" will be 0.
 
       - {short-name} (optional)
-        |String| value.  Alias of {name}.  It must be "-" and one alphabet
-        like "-f".
+        |String| value.  Alias of {name}.  It must starts with "-" and one
+        alphabet must follow it like "-f".
 
       - {description} (required)
-        |String| value. Description of option.  This is used for "--help"
+        |String| value.  Description of option.  This is used for "--help"
         argument.
 
 OptionParser.parse({q-args} [, {cmd-attributes}...])      *OptionParser.parse()*
@@ -170,7 +170,7 @@ SPECIAL OPTIONS               *optparse-option-parser-interface-special-options*
    Options:
      --hoge=VALUE : description of hoge, must have value
      --foo        : description of foo
-     --[no-]bar   : description of bar, contradictable
+     --[no-]bar   : description of bar, deniable
      --baz, -b    : description of baz, has short option
 <
     If you don't want to use "--help", set OptionParser.disable_auto_help to 1.
@@ -185,7 +185,7 @@ REPOSITORY PAGE                                       *optparse-repository-page*
 The latest version of |optparse| is available at
 https://github.com/rhysd/vim-optparse
 
-Contributions (pull requests) are welcome. None of them are too short.
+Contributions (pull requests) are welcome.  None of them are too short.
 Especially, English check is very helpful because I'm poor at English :(
 
 
