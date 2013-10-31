@@ -51,10 +51,6 @@ Hoge --help
 "    }
 ```
 
-## TODO
-
-- documentation(wip)
-
 
 ## License
 
