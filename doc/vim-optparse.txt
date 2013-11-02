@@ -140,18 +140,24 @@ OptionParser.parse({q-args} [, {cmd-attributes}...])      *OptionParser.parse()*
     Parse command options.
     {q-args} is |String| value and you must pass <q-arg> to this argument.
     {cmd-attributes} are command attributes like <range>, <count>, <bang> and
-    so on.  You need not take care of the order of attributes.
+    so on.  You need not take care of the order of attributes.  Arguments not
+    parsed result in "__unknown_args__" key's value as |List| of |String|.
+
       - {range}
         You must use |List| of <line1> and <line2>.
+        The result is "__range__" key's value as |List| of |Number|.
 
       - {count}
         You must use <count>.
+        The result is "__count__" key's value as |Number|.
 
       - {bang}
         You must use <q-bang>.
+        The result is "__bang__" key's value as |String|, "!".
 
       - {reg}
         You must use <reg> or <register>.
+        The result is "__reg__" key's value as |String|.
 >
     command! -range -bang -register Hoge
         \ echo OptionParser.parse(<q-args>, [<line1>, <line2>], <q-bang>, <reg>)
