@@ -36,24 +36,26 @@ endfunction
 
 function! s:extract_special_opts(argc, argv)
     let ret = {'specials' : {}}
-    if a:argc > 0
-        let ret.q_args = a:argv[0]
-        for arg in a:argv[1:]
-            let arg_type = type(arg)
-            if arg_type == s:LIST_TYPE
-                let ret.specials.__range__ = arg
-            elseif arg_type == type(0)
-                let ret.specials.__count__ = arg
-            elseif arg_type == s:STRING_TYPE
-                if arg ==# '!'
-                    let ret.specials.__bang__ = arg
-                elseif arg != ''
-                    let ret.specials.__reg__ = arg
-                endif
-            endif
-            unlet arg
-        endfor
+    if a:argc <= 0
+        return ret
     endif
+
+    let ret.q_args = a:argv[0]
+    for arg in a:argv[1:]
+        let arg_type = type(arg)
+        if arg_type == s:LIST_TYPE
+            let ret.specials.__range__ = arg
+        elseif arg_type == type(0)
+            let ret.specials.__count__ = arg
+        elseif arg_type == s:STRING_TYPE
+            if arg ==# '!'
+                let ret.specials.__bang__ = arg
+            elseif arg != ''
+                let ret.specials.__reg__ = arg
+            endif
+        endif
+        unlet arg
+    endfor
     return ret
 endfunction
 
@@ -72,7 +74,7 @@ endfunction
 function! s:expand_short_option(arg, options)
     let short_opt = matchstr(a:arg, '^-[^- =]\>')
     for [name, value] in items(a:options)
-        if has_key(value, 'short_option_definition') && value.short_option_definition ==# short_opt
+        if get(value, 'short_option_definition', '') ==# short_opt
             return substitute(a:arg, short_opt, '--'.name, '')
         endif
     endfor
