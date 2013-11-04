@@ -21,6 +21,10 @@ It can parse key-value style options(like --foo=bar) in Vim commands and
 |:command| attributes like <count>, <bang>, <range> and so on.
 A great advantage of key-value type options is that you need not take care of
 the order of options.
+Now, this library is included in |vital.vim|.  I recommend using it because
+there are other useful libraries in it.
+
+https://github.com/vim-jp/vital.vim
 
 
 ==============================================================================
