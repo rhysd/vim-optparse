@@ -143,6 +143,14 @@ function! s:parse_args(cmd_args, options)
     return [parsed_args, unknown_args]
 endfunction
 
+function! s:set_default_values(parsed_args, options)
+    for [name, default_value] in map(items(filter(deepcopy(a:options), 'has_key(v:val, "default")')), '[v:val[0], v:val[1].default]')
+        if ! has_key(a:parsed_args, name)
+            let a:parsed_args[name] = default_value
+        endif
+    endfor
+endfunction
+
 function! optparse#lazy#parse(...) dict
     let opts = s:extract_special_opts(a:0, a:000)
     if ! has_key(opts, 'q_args')
@@ -159,6 +167,7 @@ function! optparse#lazy#parse(...) dict
     let parsed_args = s:parse_args(opts.q_args, self.options)
 
     let ret = parsed_args[0]
+    call s:set_default_values(ret, self.options)
     call extend(ret, opts.specials)
     let ret.__unknown_args__ = parsed_args[1]
     return ret
