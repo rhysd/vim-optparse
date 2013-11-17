@@ -12,12 +12,12 @@ describe 'g:Opt.on()'
         unlet g:Opt
     end
 
-    it 'should have 2 or 3 arguments'
+    it 'should have 2..4 arguments'
         Expect "call g:Opt.on('--a')" to_throw_exception
         Expect "call g:Opt.on('--a', 'b')" not to_throw_exception
-        Expect "call g:Opt.on('--a', 'b', 'c', 'd')" to_throw_exception
-        Expect "call g:Opt.on('--a', 'b', 'c', 'd', 'e')" to_throw_exception
         Expect "call g:Opt.on('--a', '-b', 'c')" not to_throw_exception
+        Expect "call g:Opt.on('--a', '-b', 'c', 'd')" not to_throw_exception
+        Expect "call g:Opt.on('--a', 'b', 'c', 'd', 'e')" to_throw_exception
     end
 
     it 'defines --hoge option in g:Opt.options'
