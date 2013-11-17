@@ -38,13 +38,16 @@ function! s:on(...) dict
     endif
 
     " if short option is specified
-    if a:0 == 3
-        if a:2 !~# '^-[^- =]$'
-            echoerr 'Short option is invalid: '.a:2
-            return
+    if a:0 >= 3
+        if type(a:2) == type('') && a:2 =~# '^-[^- =]$'
+            let self.options[name].short_option_definition = a:2
+        else
+            let self.options[name].default = a:2
         endif
+    endif
 
-        let self.options[name].short_option_definition = a:2
+    if a:0 == 4
+        let self.options[name].default = a:3
     endif
 
     return self

@@ -71,12 +71,19 @@ describe 'g:Opt.on()'
         Expect "call g:Opt.on('--invalid name', '')" to_throw_exception
     end
 
-    " TODO more invalid names
-    it 'occurs an error when invalid short option name is specified'
-        Expect "call g:Opt.on('--valid', '-but_invalid', '')" to_throw_exception
-        Expect "call g:Opt.on('--valid', '--', '')" to_throw_exception
-        Expect "call g:Opt.on('--valid', 'a', '')" to_throw_exception
-        Expect "call g:Opt.on('--valid', '-=', '')" to_throw_exception
-        Expect "call g:Opt.on('--valid', '- ', '')" to_throw_exception
+    it 'sets default value if the default value is specified'
+        call g:Opt.on('--hoge', '')
+                 \.on('--huga', 3, '')
+                 \.on('--piyo', '-a', '')
+                 \.on('--tsura', 'a', '')
+                 \.on('--poyo', 'a', 3, '')
+        Expect g:Opt.options.hoge not to_have_key 'default'
+        Expect g:Opt.options.huga to_have_key 'default'
+        Expect g:Opt.options.huga.default == 3
+        Expect g:Opt.options.piyo not to_have_key 'default'
+        Expect g:Opt.options.tsura to_have_key 'default'
+        Expect g:Opt.options.tsura.default == 'a'
+        Expect g:Opt.options.poyo to_have_key 'default'
+        Expect g:Opt.options.poyo.default == 3
     end
 end
