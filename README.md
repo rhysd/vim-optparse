@@ -22,7 +22,8 @@ call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
 call s:opt.on('--foo', 'description of foo')
 " definitions can chain
 call s:opt.on('--[no-]bar', 'description of bar, deniable')
-         \.on('--baz', '-b', 'description of baz, has short option')
+         \.on('--baz', 'description of baz, has short option', {'short' : '-b'})
+call s:opt.on('--qux', 'description of qux, defaults to "aaa"', {'default' : 'aaa'})
 
 " define command with the parser
 command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
@@ -46,6 +47,7 @@ Hoge --help
 "     --foo        : description of foo
 "     --[no-]bar   : description of bar, deniable
 "     --baz, -b    : description of baz, has short option
+"     --qux        : description of qux, defaults to "aaa" (DEFAULT: 'aaa')
 "
 " => {
 "      '__count__' : 0,
