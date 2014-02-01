@@ -12,11 +12,11 @@ describe 'g:Opt.on()'
         unlet g:Opt
     end
 
-    it 'should have 2..4 arguments'
+    it 'should have 2..3 arguments'
         Expect "call g:Opt.on('--a')" to_throw_exception
         Expect "call g:Opt.on('--a', 'b')" not to_throw_exception
         Expect "call g:Opt.on('--a', '-b', 'c')" not to_throw_exception
-        Expect "call g:Opt.on('--a', '-b', 'c', 'd')" not to_throw_exception
+        Expect "call g:Opt.on('--a', '-b', 'c', 'd')" to_throw_exception
         Expect "call g:Opt.on('--a', 'b', 'c', 'd', 'e')" to_throw_exception
     end
 
@@ -30,13 +30,13 @@ describe 'g:Opt.on()'
     end
 
     it 'defines short option in g:Opt.options'
-        call g:Opt.on('--hoge', '-h', 'huga')
+        call g:Opt.on('--hoge', 'huga', {'short' : '-h'})
         Expect g:Opt.options.hoge to_have_key 'short_option_definition'
         Expect g:Opt.options.hoge.short_option_definition ==# '-h'
 
         " non alphabetical characters
         for na in ['!', '"', '#', '$', '%', '&', '''', '(', ')', '~', '\', '[', ']', ';', ':', '+', '*', ',', '.', '/', '1', '2', '_']
-            call g:Opt.on('--'.na, '-'.na, 'huga')
+            call g:Opt.on('--'.na, 'huga', {'short' : '-'.na})
             Expect g:Opt.options[na] to_have_key 'short_option_definition'
             Expect g:Opt.options[na].short_option_definition ==# '-'.na
         endfor
@@ -73,16 +73,14 @@ describe 'g:Opt.on()'
 
     it 'sets default value if the default value is specified'
         call g:Opt.on('--hoge', '')
-                 \.on('--huga', 3, '')
-                 \.on('--piyo', '-a', '')
-                 \.on('--tsura', 'a', '')
-                 \.on('--poyo', 'a', 3, '')
+                 \.on('--huga', '', {'default' : 3})
+                 \.on('--tsura', '', 'aaa')
+                 \.on('--poyo', 'a', 3)
         Expect g:Opt.options.hoge not to_have_key 'default'
         Expect g:Opt.options.huga to_have_key 'default'
         Expect g:Opt.options.huga.default == 3
-        Expect g:Opt.options.piyo not to_have_key 'default'
         Expect g:Opt.options.tsura to_have_key 'default'
-        Expect g:Opt.options.tsura.default == 'a'
+        Expect g:Opt.options.tsura.default == 'aaa'
         Expect g:Opt.options.poyo to_have_key 'default'
         Expect g:Opt.options.poyo.default == 3
     end

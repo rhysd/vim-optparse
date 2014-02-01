@@ -82,7 +82,7 @@ describe 'g:Opt.parse()'
     end
 
     it 'parses short option -h as ''hoge'''
-        call g:O.on('--hoge', '-h', 'huga')
+        call g:O.on('--hoge', 'huga', {'short' : '-h'})
         Expect g:O.parse('-h') == {'__unknown_args__' : [], 'hoge' : 1}
         Expect g:O.parse('--hoge') == {'__unknown_args__' : [], 'hoge' : 1}
     end
@@ -112,7 +112,7 @@ describe 'g:Opt.parse()'
     it 'parses all options defined with on() and command options at one time refardless of the order of arguments'
         call g:O.on('--hoge', '')
         call g:O.on('--huga=VALUE', '')
-        call g:O.on('--tsura', '-t', '')
+        call g:O.on('--tsura', '', {'short' : '-t'})
         call g:O.on('--[no-]poyo', '')
         let args = map(s:permutation(['--hoge', '--huga=foo', '--no-poyo', '-t', 'unknown_arg']), 'join(v:val, " ")')
         let opts_count = s:permutation(['g', 42, '!'])

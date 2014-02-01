@@ -16,7 +16,7 @@ describe 'g:Opt.help()'
         call g:O.on('--hoge=VALUE', 'description of hoge, must have value')
         call g:O.on('--foo', 'description of foo')
         call g:O.on('--[no-]bar', 'description of bar, contradictable')
-        call g:O.on('--baz', '-b', 'description of baz, has short option')
+        call g:O.on('--baz', 'description of baz, has short option', {'short' : '-b'})
 
         Expect g:O.help() ==# join([
                     \   "Options:",
