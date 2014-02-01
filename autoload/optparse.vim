@@ -39,12 +39,16 @@ function! s:on(def, desc, ...) dict
 
     " if extra option is specified
     if a:0 == 1
-        if has_key(a:1, 'short')
-            let self.options[name].short_option_definition = a:1.short
-        endif
-        if has_key(a:1, 'default')
-            let self.options[name].default_value = a:1.default
-            " TODO: Not implemented yet
+        if type(a:1) == type({})
+            if has_key(a:1, 'short')
+                let self.options[name].short_option_definition = a:1.short
+            endif
+            if has_key(a:1, 'default')
+                let self.options[name].default_value = a:1.default
+                " TODO: Not implemented yet
+            endif
+        else
+            let self.options[name].default_value = a:1
         endif
     endif
 
