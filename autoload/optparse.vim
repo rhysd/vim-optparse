@@ -44,11 +44,10 @@ function! s:on(def, desc, ...) dict
                 let self.options[name].short_option_definition = a:1.short
             endif
             if has_key(a:1, 'default')
-                let self.options[name].default = a:1.default
-                " TODO: Not implemented yet
+                let self.options[name].default_value = a:1.default
             endif
         else
-            let self.options[name].default = a:1
+            let self.options[name].default_value = a:1
         endif
     endif
 

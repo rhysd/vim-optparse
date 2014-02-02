@@ -76,12 +76,12 @@ describe 'g:Opt.on()'
                  \.on('--huga', '', {'default' : 3})
                  \.on('--tsura', '', 'aaa')
                  \.on('--poyo', 'a', 3)
-        Expect g:Opt.options.hoge not to_have_key 'default'
-        Expect g:Opt.options.huga to_have_key 'default'
-        Expect g:Opt.options.huga.default == 3
-        Expect g:Opt.options.tsura to_have_key 'default'
-        Expect g:Opt.options.tsura.default == 'aaa'
-        Expect g:Opt.options.poyo to_have_key 'default'
-        Expect g:Opt.options.poyo.default == 3
+        Expect g:Opt.options.hoge not to_have_key 'default_value'
+        Expect g:Opt.options.huga to_have_key 'default_value'
+        Expect g:Opt.options.huga.default_value == 3
+        Expect g:Opt.options.tsura to_have_key 'default_value'
+        Expect g:Opt.options.tsura.default_value == 'aaa'
+        Expect g:Opt.options.poyo to_have_key 'default_value'
+        Expect g:Opt.options.poyo.default_value == 3
     end
 end

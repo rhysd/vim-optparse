@@ -20,6 +20,9 @@ function! s:make_option_definition_for_help(opt)
     if has_key(a:opt, 'short_option_definition')
         let key .= ', '.a:opt.short_option_definition
     endif
+    if has_key(a:opt, 'default_value')
+        let key .= '(DEFAULT:' . a:opt.default_value . ')'
+    endif
     return key
 endfunction
 
@@ -144,7 +147,7 @@ function! s:parse_args(cmd_args, options)
 endfunction
 
 function! s:set_default_values(parsed_args, options)
-    for [name, default_value] in map(items(filter(deepcopy(a:options), 'has_key(v:val, "default")')), '[v:val[0], v:val[1].default]')
+    for [name, default_value] in map(items(filter(copy(a:options), 'has_key(v:val, "default_value")')), '[v:val[0], v:val[1].default_value]')
         if ! has_key(a:parsed_args, name)
             let a:parsed_args[name] = default_value
         endif
