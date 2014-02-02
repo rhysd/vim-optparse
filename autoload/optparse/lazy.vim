@@ -20,14 +20,19 @@ function! s:make_option_definition_for_help(opt)
     if has_key(a:opt, 'short_option_definition')
         let key .= ', '.a:opt.short_option_definition
     endif
-    if has_key(a:opt, 'default_value')
-        let key .= '(DEFAULT:' . a:opt.default_value . ')'
-    endif
     return key
 endfunction
 
+function! s:make_option_description_for_help(opt)
+    let desc = a:opt.description
+    if has_key(a:opt, 'default_value')
+        let desc .= ' (DEFAULT: ' . string(a:opt.default_value) . ')'
+    endif
+    return desc
+endfunction
+
 function! optparse#lazy#help_message() dict
-    let definitions = map(values(self.options), "[s:make_option_definition_for_help(v:val), v:val.description]")
+    let definitions = map(values(self.options), "[s:make_option_definition_for_help(v:val), s:make_option_description_for_help(v:val)]")
     let key_width = s:max_len(map(copy(definitions), 'v:val[0]'))
     return "Options:\n" .
         \ join(map(definitions, '

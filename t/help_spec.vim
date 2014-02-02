@@ -17,6 +17,7 @@ describe 'g:Opt.help()'
         call g:O.on('--foo', 'description of foo')
         call g:O.on('--[no-]bar', 'description of bar, contradictable')
         call g:O.on('--baz', 'description of baz, has short option', {'short' : '-b'})
+        call g:O.on('--qux', 'description of qux, has default value', {'default' : 3.14})
 
         Expect g:O.help() ==# join([
                     \   "Options:",
@@ -24,6 +25,7 @@ describe 'g:Opt.help()'
                     \   "  --baz, -b    : description of baz, has short option",
                     \   "  --hoge=VALUE : description of hoge, must have value",
                     \   "  --[no-]bar   : description of bar, contradictable",
+                    \   "  --qux        : description of qux, has default value (DEFAULT: 3.14)",
                     \ ], "\n")
     end
 
