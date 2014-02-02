@@ -156,6 +156,7 @@ function! s:set_default_values(parsed_args, options)
         if ! has_key(a:parsed_args, name)
             let a:parsed_args[name] = default_value
         endif
+        unlet default_value
     endfor
 endfunction
 
