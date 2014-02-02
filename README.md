@@ -57,7 +57,6 @@ Hoge --help
 
 ## TODO
 
-- default value
 - completefunc generation
 - allow empty value (--name=)
 
