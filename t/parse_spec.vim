@@ -82,7 +82,7 @@ describe 'g:Opt.parse()'
     end
 
     it 'parses short option -h as ''hoge'''
-        call g:O.on('--hoge', '-h', 'huga')
+        call g:O.on('--hoge', 'huga', {'short' : '-h'})
         Expect g:O.parse('-h') == {'__unknown_args__' : [], 'hoge' : 1}
         Expect g:O.parse('--hoge') == {'__unknown_args__' : [], 'hoge' : 1}
     end
@@ -97,23 +97,33 @@ describe 'g:Opt.parse()'
         Expect g:O.parse('--hoge --huga=poyo --no-poyo') == {'__unknown_args__' : ['--hoge', '--huga=poyo', '--no-poyo']}
     end
 
+    it 'sets default values if they are set in on() and they are not specified by user'
+        call g:O.on('--hoge', '', {'default' : 3.14})
+        call g:O.on('--huga', '', 'default value')
+        Expect g:O.parse('') == {'__unknown_args__' : [], 'hoge' : 3.14, 'huga' : 'default value'}
+        Expect g:O.parse('--hoge --huga --piyo') == {'__unknown_args__' : ['--piyo'], 'hoge' : 1, 'huga' : 1}
+    end
+
     it 'parses all argument types at one time regardless of the order of arguments'
         call g:O.on('--hoge', '')
         call g:O.on('--huga=VALUE', '')
         call g:O.on('--[no-]poyo', '')
+        call g:O.on('--piyo', '', {'default' : 'aaa'})
         let args = ['--hoge', '--huga=foo', '--no-poyo', 'unknown_arg']
         let perms = s:permutation(args)
         for p in perms
             Expect g:O.parse(join(p, ' ')) ==
-                        \ {'__unknown_args__' : ['unknown_arg'], 'hoge' : 1, 'huga' : 'foo', 'poyo' : 0}
+                        \ {'__unknown_args__' : ['unknown_arg'], 'hoge' : 1, 'huga' : 'foo', 'poyo' : 0, 'piyo' : 'aaa'}
         endfor
     end
 
     it 'parses all options defined with on() and command options at one time refardless of the order of arguments'
         call g:O.on('--hoge', '')
         call g:O.on('--huga=VALUE', '')
-        call g:O.on('--tsura', '-t', '')
+        call g:O.on('--tsura', '', {'short' : '-t'})
         call g:O.on('--[no-]poyo', '')
+        call g:O.on('--piyo', '', {'default' : 42})
+        call g:O.on('--puyo', '', 3.14)
         let args = map(s:permutation(['--hoge', '--huga=foo', '--no-poyo', '-t', 'unknown_arg']), 'join(v:val, " ")')
         let opts_count = s:permutation(['g', 42, '!'])
         let opts_range = s:permutation(['g', [1, 100], '!'])
@@ -131,6 +141,8 @@ describe 'g:Opt.parse()'
                             \   'huga' : 'foo',
                             \   'tsura' : 1,
                             \   'poyo' : 0,
+                            \   'piyo' : 42,
+                            \   'puyo' : 3.14,
                             \ }
             endfor
         endfor
@@ -147,7 +159,9 @@ describe 'g:Opt.parse()'
                             \   'hoge' : 1,
                             \   'huga' : 'foo',
                             \   'tsura' : 1,
-                            \   'poyo' : 0
+                            \   'poyo' : 0,
+                            \   'piyo' : 42,
+                            \   'puyo' : 3.14,
                             \ }
             endfor
         endfor

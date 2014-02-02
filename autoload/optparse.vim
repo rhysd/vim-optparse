@@ -7,14 +7,14 @@ endfunction
 let s:SID = s:get_SID()
 delfunction s:get_SID
 
-function! s:on(...) dict
-    if ! (2 <= a:0 && a:0 <= 4)
-        echoerr 'Wrong number of arguments: '.a:0.' for 2..4'
+function! s:on(def, desc, ...) dict
+    if a:0 > 1
+        echoerr 'Wrong number of arguments: ' . a:0+2 . ' for 2..3'
         return
     endif
 
     " get hoge and huga from --hoge=huga
-    let [name, value] = matchlist(a:1, '^--\([^= ]\+\)\(=\S\+\)\=$')[1:2]
+    let [name, value] = matchlist(a:def, '^--\([^= ]\+\)\(=\S\+\)\=$')[1:2]
     if value != ''
         let has_value = 1
     endif
@@ -25,11 +25,11 @@ function! s:on(...) dict
     endif
 
     if name == ''
-        echoerr 'Option of key is invalid: '.a:1
+        echoerr 'Option of key is invalid: '.a:def
         return
     endif
 
-    let self.options[name] = {'definition' : a:1, 'description' : a:000[-1]}
+    let self.options[name] = {'definition' : a:def, 'description' : a:desc}
     if exists('l:no')
         let self.options[name].no = 1
     endif
@@ -37,17 +37,18 @@ function! s:on(...) dict
         let self.options[name].has_value = 1
     endif
 
-    " if short option is specified
-    if a:0 >= 3
-        if type(a:2) == type('') && a:2 =~# '^-[^- =]$'
-            let self.options[name].short_option_definition = a:2
+    " if extra option is specified
+    if a:0 == 1
+        if type(a:1) == type({})
+            if has_key(a:1, 'short')
+                let self.options[name].short_option_definition = a:1.short
+            endif
+            if has_key(a:1, 'default')
+                let self.options[name].default_value = a:1.default
+            endif
         else
-            let self.options[name].default = a:2
+            let self.options[name].default_value = a:1
         endif
-    endif
-
-    if a:0 == 4
-        let self.options[name].default = a:3
     endif
 
     return self

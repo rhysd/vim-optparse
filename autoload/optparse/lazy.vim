@@ -23,8 +23,16 @@ function! s:make_option_definition_for_help(opt)
     return key
 endfunction
 
+function! s:make_option_description_for_help(opt)
+    let desc = a:opt.description
+    if has_key(a:opt, 'default_value')
+        let desc .= ' (DEFAULT: ' . string(a:opt.default_value) . ')'
+    endif
+    return desc
+endfunction
+
 function! optparse#lazy#help_message() dict
-    let definitions = map(values(self.options), "[s:make_option_definition_for_help(v:val), v:val.description]")
+    let definitions = map(values(self.options), "[s:make_option_definition_for_help(v:val), s:make_option_description_for_help(v:val)]")
     let key_width = s:max_len(map(copy(definitions), 'v:val[0]'))
     return "Options:\n" .
         \ join(map(definitions, '
@@ -138,16 +146,18 @@ function! s:parse_args(cmd_args, options)
         else
             call add(unknown_args, parsed_arg)
         endif
+        unlet parsed_arg
     endfor
 
     return [parsed_args, unknown_args]
 endfunction
 
 function! s:set_default_values(parsed_args, options)
-    for [name, default_value] in map(items(filter(deepcopy(a:options), 'has_key(v:val, "default")')), '[v:val[0], v:val[1].default]')
+    for [name, default_value] in map(items(filter(copy(a:options), 'has_key(v:val, "default_value")')), '[v:val[0], v:val[1].default_value]')
         if ! has_key(a:parsed_args, name)
             let a:parsed_args[name] = default_value
         endif
+        unlet default_value
     endfor
 endfunction
 
