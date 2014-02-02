@@ -97,6 +97,12 @@ describe 'g:Opt.parse()'
         Expect g:O.parse('--hoge --huga=poyo --no-poyo') == {'__unknown_args__' : ['--hoge', '--huga=poyo', '--no-poyo']}
     end
 
+    it 'sets default values if they are set in on() and they are not specified by user'
+        call g:O.on('--hoge', '', {'default' : 3.14})
+        call g:O.on('--huga', '', 'default value')
+        Expect g:O.parse('') == {'__unknown_args__' : [], 'hoge' : 3.14, 'huga' : 'default value'}
+    end
+
     it 'parses all argument types at one time regardless of the order of arguments'
         call g:O.on('--hoge', '')
         call g:O.on('--huga=VALUE', '')

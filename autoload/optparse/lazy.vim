@@ -146,6 +146,7 @@ function! s:parse_args(cmd_args, options)
         else
             call add(unknown_args, parsed_arg)
         endif
+        unlet parsed_arg
     endfor
 
     return [parsed_args, unknown_args]
