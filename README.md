@@ -1,4 +1,4 @@
-Option parser for Vim script
+Option Parser for Vim Commands
 ============================
 
 [![Build Status](https://travis-ci.org/rhysd/vim-optparse.png?branch=master)](https://travis-ci.org/rhysd/vim-optparse)
