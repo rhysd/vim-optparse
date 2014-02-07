@@ -73,11 +73,7 @@ $ cp -r optparse/autoload/optparse -> your_plugin/autoload/your_plugin/
 
 And use `your_plugin#optparse#new()`.
 
-If you embed vim-optparse, _be care about license below. Please do not forget to add copyright notice in your plugin's document._
-
-```
-Copyright (c) 2013-2014 rhysd
-```
+If you embed vim-optparse, __be care about license below. Please do not forget to add copyright notice in your plugin's document.__
 
 ## TODO
 
