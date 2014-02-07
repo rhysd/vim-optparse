@@ -9,7 +9,7 @@ there are other useful libraries in it.
 
 ## Usage
 
-At first, make new instnce of a parser with `optparse#new()`, then define options you want to parse with `on({definition} [, {short definition}], {description})` funcref.  At last, define command with `parse({args}, [{count}, {bang}, {reg}, {range}])`.  Note that you must use `<q-args>` for `{args}`, `<count>` for `{count}`, `<q-bang>` for `{bang}` and `[<line1>, <line2>]` for `{range}`.  This library's interface is inspired by `OptionParser` in Ruby.
+At first, make new instnce of a parser with `optparse#new()`, then define options you want to parse with `on({definition}, {description} [, {extra}])` funcref.  At last, define command with `parse({args}, [{count}, {bang}, {reg}, {range}])`.  Note that you must use `<q-args>` for `{args}`, `<count>` for `{count}`, `<q-bang>` for `{bang}` and `[<line1>, <line2>]` for `{range}`.  This library's interface is inspired by `OptionParser` in Ruby.
 
 ## Example
 
@@ -17,13 +17,13 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 " make option parser instance
 let s:opt = optparse#new()
 
-" define option
+" define options
 call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
 call s:opt.on('--foo', 'description of foo')
-" definitions can chain
+" Note: definitions can chain
 call s:opt.on('--[no-]bar', 'description of bar, deniable')
          \.on('--baz', 'description of baz, has short option', {'short' : '-b'})
-call s:opt.on('--qux', 'description of qux, defaults to "aaa"', {'default' : 'aaa'})
+         \.on('--qux', 'description of qux, defaults to "aaa"', {'default' : 'aaa'})
 
 " define command with the parser
 command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
@@ -36,6 +36,7 @@ Hoge! --hoge=huga --no-bar poyo -b
 "      'hoge' : 'huga',
 "      'bar' : 0,
 "      'baz' : 1,
+"      'qux' : 'aaa',
 "      '__unknown_args__' : ['poyo'],
 "    }
 
