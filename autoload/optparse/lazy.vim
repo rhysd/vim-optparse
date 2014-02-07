@@ -183,5 +183,9 @@ function! optparse#lazy#parse(...) dict
     return ret
 endfunction
 
+function! optparse#lazy#complete(arglead, cmdline, cursorpos) dict
+    throw "Not implemented yet"
+endfunction
+
 let &cpo = s:save_cpo
 unlet s:save_cpo
