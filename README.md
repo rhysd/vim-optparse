@@ -18,8 +18,8 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 let s:opt = optparse#new()
 
 " user-defined option completion (see :help :command-completion-customlist)
-function! CompleteBazOption(arglead, cmdline, cursorpos)
-    return ['candidate1', 'candidate2', 'candidate3']
+function! CompleteBazOption(optlead)
+    return filter(['sushi', 'yakiniku', 'yakitori'], 'v:val =~# a:optlead')
 endfunction
 
 " define options
