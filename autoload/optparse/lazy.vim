@@ -186,9 +186,10 @@ endfunction
 function! s:long_option_completion(arglead, options)
     let candidates = []
     for [name, option] in items(a:options)
-        call add(candidates, '--' . name)
-        if has_key(option, 'no') && option.no
-            call add(candidates, '--no-' . name)
+        let has_value = get(option, 'has_value', 0)
+        call add(candidates, '--' . name . (has_value ? '=' : ''))
+        if get(option, 'no', 0)
+            call add(candidates, '--no-' . name . (has_value ? '=' : ''))
         endif
     endfor
     let lead_pattern = '^' . a:arglead
@@ -198,10 +199,11 @@ endfunction
 function! s:short_option_completion(arglead, options)
     let candidates = []
     for option in values(a:options)
+        let has_value = get(option, 'has_value', 0)
         if has_key(option, 'short_option_definition')
-            call add(candidates, option.short_option_definition)
-            if has_key(option, 'no') && option.no
-                call add(candidates, '-no' . option.short_option_definition)
+            call add(candidates, option.short_option_definition . (has_value ? '=' : ''))
+            if get(option, 'no', 0)
+                call add(candidates, '-no' . option.short_option_definition . (has_value ? '=' : ''))
             endif
         endif
     endfor
