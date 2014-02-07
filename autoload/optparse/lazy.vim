@@ -211,19 +211,19 @@ function! s:short_option_completion(arglead, options)
     return filter(candidates, 'v:val =~# lead_pattern')
 endfunction
 
-function! s:user_defined_completion(lead, name, options)
+function! s:user_defined_completion(lead, name, options, cmdline, cursorpos)
     if ! has_key(a:options, a:name) || ! has_key(a:options[a:name], 'completion')
         return []
     endif
-    return a:options[a:name].completion(a:lead)
+    return a:options[a:name].completion(a:lead, a:cmdline, a:cursorpos)
 endfunction
 
-function! s:user_defined_short_option_completion(lead, def, options)
+function! s:user_defined_short_option_completion(lead, def, options, cmdline, cursorpos)
     for option in values(a:options)
         if has_key(option, 'short_option_definition')
             \ && option.short_option_definition ==# a:def
             \ && has_key(option, 'completion')
-            return option.completion(a:lead)
+            return option.completion(a:lead, a:cmdline, a:cursorpos)
         endif
     endfor
     return []
@@ -233,21 +233,38 @@ function! optparse#lazy#complete(arglead, cmdline, cursorpos) dict
     if a:arglead =~# '^--[^=]*$'
         " when long option
         return s:long_option_completion(a:arglead, self.options)
+
     elseif a:arglead =~# '^-[^-=]?$'
         " when short option
         return s:short_option_completion(a:arglead, self.options)
+
     elseif a:arglead =~# '^--.\+=.*$'
         let lead = matchstr(a:arglead, '=\zs.*$')
         let name = matchstr(a:arglead, '^--\zs[^=]\+')
         let prefix = matchstr(a:arglead, '^.\+=')
-        return map(s:user_defined_completion(lead, name, self.options), 'prefix . v:val')
+        return map(
+            \  s:user_defined_completion(lead, name, self.options, a:cmdline, a:cursorpos),
+            \ 'prefix . v:val'
+            \ )
+
     elseif a:arglead =~# '^-[^-=]=.*$'
         let lead = matchstr(a:arglead, '=\zs.*$')
         let def = matchstr(a:arglead, '^-[^-=]')
         let prefix = def . '='
-        return map(s:user_defined_short_option_completion(lead, def, self.options), 'prefix . v:val')
+        return map(
+             \ s:user_defined_short_option_completion(lead, def, self.options, a:cmdline, a:cursorpos),
+             \ 'prefix . v:val'
+             \ )
+
+    elseif has_key(self, 'unknown_options_completion')
+        if type(self.unknown_options_completion) == type('')
+            return call('optparse#completion#' . self.unknown_options_completion, [a:arglead, a:cmdline, a:cursorpos])
+        else
+            return self.unknown_options_completion(a:arglead, a:cmdline, a:cursorpos)
+        endif
     endif
-    throw "Not implemented yet"
+
+    return []
 endfunction
 
 let &cpo = s:save_cpo

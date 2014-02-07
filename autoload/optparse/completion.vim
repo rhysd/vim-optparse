@@ -1,4 +1,4 @@
-function! optparse#completion#file(optlead)
+function! optparse#completion#file(optlead, cmdline, cursorpos)
     let candidates = glob(a:optlead . '*', 0, 1)
     if a:optlead =~# '^\~'
         let home_matcher = '^' . expand('~') . '/'
