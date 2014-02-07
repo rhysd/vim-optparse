@@ -183,7 +183,68 @@ function! optparse#lazy#parse(...) dict
     return ret
 endfunction
 
+function! s:long_option_completion(arglead, options)
+    let candidates = []
+    for [name, option] in items(a:options)
+        call add(candidates, '--' . name)
+        if has_key(option, 'no') && option.no
+            call add(candidates, '--no-' . name)
+        endif
+    endfor
+    let lead_pattern = '^' . a:arglead
+    return filter(candidates, 'v:val =~# lead_pattern')
+endfunction
+
+function! s:short_option_completion(arglead, options)
+    let candidates = []
+    for option in values(a:options)
+        if has_key(option, 'short_option_definition')
+            call add(candidates, option.short_option_definition)
+            if has_key(option, 'no') && option.no
+                call add(candidates, '-no' . option.short_option_definition)
+            endif
+        endif
+    endfor
+    let lead_pattern = '^' . a:arglead
+    return filter(candidates, 'v:val =~# lead_pattern')
+endfunction
+
+function! s:user_defined_completion(lead, name, options)
+    if ! has_key(a:options, a:name) || ! has_key(a:options[a:name], 'completion')
+        return []
+    endif
+    return a:options[a:name].completion(a:lead)
+endfunction
+
+function! s:user_defined_short_option_completion(lead, def, options)
+    for option in values(a:options)
+        if has_key(option, 'short_option_definition')
+            \ && option.short_option_definition ==# a:def
+            \ && has_key(option, 'completion')
+            return option.completion(a:lead)
+        endif
+    endfor
+    return []
+endfunction
+
 function! optparse#lazy#complete(arglead, cmdline, cursorpos) dict
+    if a:arglead =~# '^--[^=]*$'
+        " when long option
+        return s:long_option_completion(a:arglead, self.options)
+    elseif a:arglead =~# '^-[^-=]?$'
+        " when short option
+        return s:short_option_completion(a:arglead, self.options)
+    elseif a:arglead =~# '^--.\+=.*$'
+        let lead = matchstr(a:arglead, '=\zs.*$')
+        let name = matchstr(a:arglead, '^--\zs[^=]\+')
+        let prefix = matchstr(a:arglead, '^.\+=')
+        return map(s:user_defined_completion(lead, name, self.options), 'prefix . v:val')
+    elseif a:arglead =~# '^-[^-=]=.*$'
+        let lead = matchstr(a:arglead, '=\zs.*$')
+        let def = matchstr(a:arglead, '^-[^-=]')
+        let prefix = def . '='
+        return map(s:user_defined_short_option_completion(lead, def, self.options), 'prefix . v:val')
+    endif
     throw "Not implemented yet"
 endfunction
 
