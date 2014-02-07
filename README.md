@@ -56,6 +56,29 @@ Hoge --help
 "    }
 ```
 
+## Installation
+
+### Install vim-optparse as Stand Alone Plugin
+
+Install vim-optparse as stand alone plugin and use `optparse#new()`.
+
+### Embed vim-optparse in Your Plugin
+
+Copy `autoload/*` to `autoload/your_plugin/`.
+
+```
+$ cp optparse/autoload/optparse.vim -> your_plugin/autoload/your_plugin/optparse.vim
+$ cp -r optparse/autoload/optparse -> your_plugin/autoload/your_plugin/
+```
+
+And use `your_plugin#optparse#new()`.
+
+If you embed vim-optparse, _be care about license below. Please do not forget to add copyright notice in your plugin's document._
+
+```
+Copyright (c) 2013-2014 rhysd
+```
+
 ## TODO
 
 - completefunc generation
@@ -63,4 +86,4 @@ Hoge --help
 
 ## License
 
-Copyright (c) 2013 rhysd [MIT License](http://opensource.org/licenses/MIT).
+Copyright (c) 2013-2014 rhysd [MIT License](http://opensource.org/licenses/MIT).
