@@ -17,16 +17,30 @@ At first, make new instnce of a parser with `optparse#new()`, then define option
 " make option parser instance
 let s:opt = optparse#new()
 
+" user-defined option completion (see :help :command-completion-customlist)
+function! CompleteBazOption(arglead, cmdline, cursorpos)
+    return ['candidate1', 'candidate2', 'candidate3']
+endfunction
+
 " define options
 call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
 call s:opt.on('--foo', 'description of foo')
 " Note: definitions can chain
-call s:opt.on('--[no-]bar', 'description of bar, deniable')
-         \.on('--baz', 'description of baz, has short option', {'short' : '-b'})
+call s:opt.on('--[no-]bar', 'description of bar, deniable', {'completion' : 'file'})
+         \.on('--baz', 'description of baz, has short option',
+                 \ {'short' : '-b', 'completion' : function('CompleteBazOption')})
          \.on('--qux', 'description of qux, defaults to "aaa"', {'default' : 'aaa'})
 
+" set complete function for unknown options
+let s:opt.unknown_options_completion = 'file'
+
+" prepare for a completion function
+function! CompleteHoge(arglead, cmdline, cursorpos)
+    return s:opt.complete(a:arglead, a:cmdline, a:cursorpos)
+endfunction
+
 " define command with the parser
-command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
+command! -nargs=* -count -bang -complete=customlist,CompleteHoge Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
 
 " execute!
 Hoge! --hoge=huga --no-bar poyo -b
@@ -73,7 +87,7 @@ $ cp -r optparse/autoload/optparse -> your_plugin/autoload/your_plugin/
 
 And use `your_plugin#optparse#new()`.
 
-If you embed vim-optparse, __be care about license below. Please do not forget to add copyright notice in your plugin's document.__
+If you embed vim-optparse, __be care about license below__. Please do not forget to add copyright notice in your plugin.
 
 ## TODO
 
