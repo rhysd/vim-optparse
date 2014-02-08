@@ -110,7 +110,7 @@ optparse#new()                                                  *optparse#new()*
 ==============================================================================
 OPTION PARSER INTERFACE                       *optparse-option-parser-interface*
 
-OptionParser.on({name}, {description} [, {option}])          *OptionParser.on()*
+OptionParser.on({name}, {description} [, {extra}])          *OptionParser.on()*
 
     Define a option to parse.  You should call this function every option.
 
@@ -138,9 +138,9 @@ OptionParser.on({name}, {description} [, {option}])          *OptionParser.on()*
         |String| value.  Description of option.  This is used for "--help"
         argument.
 
-      - {option} (optional)
-        |Dictionary| value.  It has "short" or "default" option to define
-        additional behavior of the option.
+      - {extra} (optional)
+        |Dictionary| value.  It has "short", "default" or "completion" key to
+        define additional behavior of the option.
 
         - "short"
           Value of "short" key defines abbreviation of the option.  This is an
