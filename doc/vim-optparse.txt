@@ -185,9 +185,9 @@ OptionParser.help()                                        *OptionParser.help()*
 ------------------------------------------------------------------------------
 SPECIAL OPTIONS               *optparse-option-parser-interface-special-options*
 
-    "--help" option is a special option which is available in all commands
-    parsed by |optparse|.  If "--help" echos usage of the command.  Below is
-    an output example.
+"--help" option is a special option which is available in all commands parsed
+by |optparse|.  If "--help" echos usage of the command.  Below is an output
+example.
 >
    Options:
      --hoge=VALUE : description of hoge, must have value
