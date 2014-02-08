@@ -9,6 +9,7 @@ describe 'Default settings'
         Expect 'call g:Opt.parse("hoge")' not to_throw_exception
         Expect '*optparse#lazy#parse' to_exist
         Expect '*optparse#lazy#help_message' to_exist
+        Expect '*optparse#lazy#complete' to_exist
         unlet g:Opt
     end
 end
@@ -24,5 +25,7 @@ describe 'optparse#new()'
         Expect g:Opt.parse to_be_funcref
         Expect g:Opt to_have_key 'help'
         Expect g:Opt.help to_be_funcref
+        Expect g:Opt to_have_key 'complete'
+        Expect g:Opt.complete to_be_funcref
     end
 end
