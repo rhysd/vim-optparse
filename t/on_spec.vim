@@ -1,6 +1,10 @@
 let s:root_dir = matchstr(system('git rev-parse --show-cdup'), '[^\n]\+')
 execute 'set' 'rtp +=./'.s:root_dir
 
+function! CompletionTest(optlead, cmdline, col)
+    return ['aaa', 'bbb', 'ccc']
+endfunction
+
 call vspec#matchers#load()
 
 describe 'g:Opt.on()'
@@ -83,5 +87,16 @@ describe 'g:Opt.on()'
         Expect g:Opt.options.tsura.default_value == 'aaa'
         Expect g:Opt.options.poyo to_have_key 'default_value'
         Expect g:Opt.options.poyo.default_value == 3
+    end
+
+    it 'sets function for completion with "completion" key'
+        call g:Opt.on('--hoge', '', {'completion' : 'file'})
+                 \.on('--huga', '', {'completion' : function('CompletionTest')})
+                 \.on('--piyo', '')
+        Expect g:Opt.options.hoge to_have_key 'completion'
+        Expect g:Opt.options.huga to_have_key 'completion'
+        Expect g:Opt.options.piyo not to_have_key 'completion'
+        Expect g:Opt.options.hoge.completion to_be_funcref
+        Expect g:Opt.options.huga.completion to_be_funcref
     end
 end

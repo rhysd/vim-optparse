@@ -20,7 +20,8 @@ INTRODUCTION                                             *optparse-introduction*
 It can parse key-value style options(like --foo=bar) in Vim commands and
 |:command| attributes like <count>, <bang>, <range> and so on.
 A great advantage of key-value type options is that you need not take care of
-the order of options.
+the order of options.  And it provides completion for option names and you can
+add your own completion for the option values.
 Now, this library is included in |vital.vim|.  I recommend using it because
 there are other useful libraries in it.
 
@@ -35,46 +36,62 @@ options you want to parse with |OptionParser.on()|.  At last, define command
 with |OptionParser.parse()|.
 This library's interface is inspired by OptionParser in Ruby.
 >
-  " make option parser instance
-  let s:opt = optparse#new()
+    " make option parser instance
+    let s:opt = optparse#new()
 
-  " define option
-  call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
-  call s:opt.on('--foo', 'description of foo')
-  " definitions can chain
-  call s:opt.on('--[no-]bar', 'description of bar, contradictable')
-           \.on('--baz', 'description of baz, has short option', {'short' : '-b'})
-           \.on('--qux', 'description of qux, defaults to "aaa"', {'default' : 'aaa'})
+    " user-defined option completion (see :help :command-completion-customlist)
+    "   Note: optlead is *NOT* arglead (when '--baz=h', 'h' is optlead.)
+    function! CompleteBazOption(optlead)
+        return filter(['sushi', 'yakiniku', 'yakitori'], 'v:val =~# a:optlead')
+    endfunction
 
-  " define command with the parser
-  command! -nargs=* -count -bang Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
+    " define options
+    call s:opt.on('--hoge=VALUE', 'description of hoge, must have value')
+    call s:opt.on('--foo', 'description of foo')
+    " Note: definitions can chain
+    call s:opt.on('--[no-]bar', 'description of bar, deniable', {'completion' : 'file'})
+            \.on('--baz', 'description of baz, has short option',
+                    \ {'short' : '-b', 'completion' : function('CompleteBazOption')})
+            \.on('--qux', 'description of qux, defaults to "aaa"', {'default' : 'aaa'})
 
-  " execute!
-  Hoge! --hoge=huga --no-bar poyo -b
-  " => {
-  "      '__count__' : 0,
-  "      '__bang__' : '!',
-  "      'hoge' : 'huga',
-  "      'bar' : 0,
-  "      'baz' : 1,
-  "      'qux' : 'aaa',
-  "      '__unknown_args__' : ['poyo'],
-  "    }
+    " set complete function for unknown options
+    let s:opt.unknown_options_completion = 'file'
 
-  " show help
-  Hoge --help
-  " echo following message
-  "   Options:
-  "     --hoge=VALUE : description of hoge, must have value
-  "     --foo        : description of foo
-  "     --[no-]bar   : description of bar, contradictable
-  "     --baz, -b    : description of baz, has short option
-  "     --qux        : description of qux, defaults to "aaa" (DEFAULT: 'aaa')
-  "
-  " => {
-  "      '__count__' : 0,
-  "      'help' : 1,
-  "    }
+    " prepare for a completion function
+    function! CompleteHoge(arglead, cmdline, cursorpos)
+        return s:opt.complete(a:arglead, a:cmdline, a:cursorpos)
+    endfunction
+
+    " define command with the parser
+    command! -nargs=* -count -bang -complete=customlist,CompleteHoge
+                    \ Hoge echo s:opt.parse(<q-args>, <count>, <q-bang>)
+
+    " execute!
+    Hoge! --hoge=huga --no-bar poyo -b
+    " => {
+    "      '__count__' : 0,
+    "      '__bang__' : '!',
+    "      'hoge' : 'huga',
+    "      'bar' : 0,
+    "      'baz' : 1,
+    "      'qux' : 'aaa',
+    "      '__unknown_args__' : ['poyo'],
+    "    }
+
+    " show help
+    Hoge --help
+    " echo following message
+    "   Options:
+    "     --hoge=VALUE : description of hoge, must have value
+    "     --foo        : description of foo
+    "     --[no-]bar   : description of bar, deniable
+    "     --baz, -b    : description of baz, has short option
+    "     --qux        : description of qux, defaults to "aaa" (DEFAULT: 'aaa')
+    "
+    " => {
+    "      '__count__' : 0,
+    "      'help' : 1,
+    "    }
 <
 
 ==============================================================================
@@ -110,7 +127,7 @@ optparse#new()                                                  *optparse#new()*
 ==============================================================================
 OPTION PARSER INTERFACE                       *optparse-option-parser-interface*
 
-OptionParser.on({name}, {description} [, {option}])          *OptionParser.on()*
+OptionParser.on({name}, {description} [, {extra}])          *OptionParser.on()*
 
     Define a option to parse.  You should call this function every option.
 
@@ -138,9 +155,9 @@ OptionParser.on({name}, {description} [, {option}])          *OptionParser.on()*
         |String| value.  Description of option.  This is used for "--help"
         argument.
 
-      - {option} (optional)
-        |Dictionary| value.  It has "short" or "default" option to define
-        additional behavior of the option.
+      - {extra} (optional)
+        |Dictionary| value.  It has "short", "default" or "completion" key to
+        define additional behavior of the option.
 
         - "short"
           Value of "short" key defines abbreviation of the option.  This is an
@@ -150,6 +167,19 @@ OptionParser.on({name}, {description} [, {option}])          *OptionParser.on()*
         - "default"
           Value of "default" key defines the default value when the option is
           omitted.
+
+        - "completion"
+          Value of "completion" key must be |Funcref| or |String|. If |String|, it
+          means a name of default completer.  See |optparse-built-in-completers|
+          to know default completers.  If |Funcref|, it is used directly when
+          the value of the option should be completed.  The function should
+          have 3 arguments, {optlead}, {cmdline}, {cursorpos}.  {optlead} is 
+          the lead portion of the VALUE of the option.  {cmdline} is the
+          |String| of command line. {cursorpos} is the place of cursor.
+          For example, if you set |Funcref| for "--hoge=VALUE" option, it will
+          be called when a user input "--hoge=". When user input "--hoge=h",
+          "h" is passed to {optlead}.  {optlead} is NOT ArgLead of
+          |:command-completion-custom|.
 
 OptionParser.parse({q-args} [, {cmd-attributes}...])      *OptionParser.parse()*
 
@@ -182,12 +212,23 @@ OptionParser.help()                                        *OptionParser.help()*
 
     Make output for --help option and return it as |String|.
 
+OptionParser.unknown_options_completion
+                                       *OptionParser.unknown_options_completion*
+
+    It is |String| or |Funcref| and used when options which OptionParser doesn't
+    know should be completed.  If |String|, it means a name of default completer.
+    See |optparse-built-in-completers| to know default completers.  If |Funcref|,
+    it is used directly when the value of the option should be completed.
+    The interface of the function is the same as "completion" of {extra}.
+    For example, when a user input ":SomeCommand unknown", "unknown" will be
+    passed to {optlead} of the complete function.
+
 ------------------------------------------------------------------------------
 SPECIAL OPTIONS               *optparse-option-parser-interface-special-options*
 
-    "--help" option is a special option which is available in all commands
-    parsed by |optparse|.  If "--help" echos usage of the command.  Below is
-    an output example.
+"--help" option is a special option which is available in all commands parsed
+by |optparse|.  If "--help" echos usage of the command.  Below is an output
+example.
 >
    Options:
      --hoge=VALUE : description of hoge, must have value
@@ -196,11 +237,16 @@ SPECIAL OPTIONS               *optparse-option-parser-interface-special-options*
      --baz, -b    : description of baz, has short option
      --qux        : description of qux, defaults to "aaa" (DEFAULT: 'aaa')
 <
-    If you don't want to use "--help", set OptionParser.disable_auto_help to 1.
+If you don't want to use "--help", set OptionParser.disable_auto_help to 1.
 >
     let s:O = optparse#new()
     let s:O.disable_auto_help = 1
 <
+------------------------------------------------------------------------------
+BUILT-IN COMPLETERS                               *optparse-built-in-completers*
+
+  - 'file'
+    It completes file or directory names.
 
 ==============================================================================
 REPOSITORY PAGE                                       *optparse-repository-page*

@@ -46,6 +46,13 @@ function! s:on(def, desc, ...) dict
             if has_key(a:1, 'default')
                 let self.options[name].default_value = a:1.default
             endif
+            if has_key(a:1, 'completion')
+                if type(a:1.completion) == type('')
+                    let self.options[name].completion = function('optparse#completion#' . a:1.completion)
+                else
+                    let self.options[name].completion = a:1.completion
+                endif
+            endif
         else
             let self.options[name].default_value = a:1
         endif
@@ -59,6 +66,7 @@ function! optparse#new()
            \ 'on' : function(s:SID.'on'),
            \ 'parse' : function('optparse#lazy#parse'),
            \ 'help' : function('optparse#lazy#help_message'),
+           \ 'complete' : function('optparse#lazy#complete'),
            \ }
 endfunction
 
