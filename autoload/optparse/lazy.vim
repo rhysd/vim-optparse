@@ -234,7 +234,7 @@ function! optparse#lazy#complete(arglead, cmdline, cursorpos) dict
         " when long option
         return s:long_option_completion(a:arglead, self.options)
 
-    elseif a:arglead =~# '^-[^-=]?$'
+    elseif a:arglead =~# '^-[^-=]\?$'
         " when short option
         return s:short_option_completion(a:arglead, self.options)
 
