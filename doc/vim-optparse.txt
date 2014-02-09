@@ -223,6 +223,21 @@ OptionParser.unknown_options_completion
     For example, when a user input ":SomeCommand unknown", "unknown" will be
     passed to {optlead} of the complete function.
 
+OptionParser.complete({arglead}, {cmdline}, {cursorpos})
+
+    It is |Funcref| to complete options in command line.  This function is
+    assumed to pass to the function for customlist of command.  You must wrap
+    it with a global or autoload function like below.
+>
+    function! CompleteFunctionForHoge(arglead, cmdline, cursorpos)
+        return s:opt.complete(a:arglead, a:cmdline, a:cursorpos)
+    endfunction
+    command! -complete=customlist,CompleteFunctionForHoge Hoge ...
+<
+    This is because "customlist" cannot take |Funcref|.
+    And this function return |List| of candidates.  You must use "customlist"
+    and must not use "custom" in |:command|.
+
 ------------------------------------------------------------------------------
 SPECIAL OPTIONS               *optparse-option-parser-interface-special-options*
 
